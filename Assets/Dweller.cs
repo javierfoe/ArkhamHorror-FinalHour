@@ -11,6 +11,12 @@ public abstract class Dweller : MonoBehaviour
         for (var i = 0; i < damage; i++) Hit();
     }
 
+    public void Destroy()
+    {
+        transform.SetParent(null);
+        gameObject.SetActive(false);
+    }
+
     private void Hit()
     {
         _currentHp--;

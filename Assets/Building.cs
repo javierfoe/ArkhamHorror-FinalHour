@@ -119,6 +119,16 @@ public class Building : MonoBehaviour
             _ => throw new ArgumentOutOfRangeException()
         };
 
+        var pathway = _pathways[nextBuilding];
+        
+        var deadMonster = pathway.MonsterDiesToSeal(monster);
+
+        if (deadMonster)
+        {
+            monster.Location = null;
+            return;
+        }
+
         if (nextBuilding == first) return;
 
         nextBuilding.IncomingMonster(monster, first);
