@@ -43,6 +43,7 @@ public class Building : MonoBehaviour
     {
         foreach (var monster in _monsterOrder)
         {
+            Debug.Log("Activated monster", monster.gameObject);
             yield return monster.Activate();
         }
 
@@ -123,13 +124,7 @@ public class Building : MonoBehaviour
         
         var deadMonster = pathway.MonsterDiesToSeal(monster);
 
-        if (deadMonster)
-        {
-            monster.Location = null;
-            return;
-        }
-
-        if (nextBuilding == first) return;
+        if (deadMonster || nextBuilding == first) return;
 
         nextBuilding.IncomingMonster(monster, first);
     }

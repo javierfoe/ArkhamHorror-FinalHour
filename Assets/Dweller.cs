@@ -2,37 +2,36 @@ using UnityEngine;
 
 public abstract class Dweller : MonoBehaviour
 {
-    [SerializeField] private int hp = 3;
     [SerializeField] private Transform hitPoints;
     private int _currentHp;
+    protected int MaxHp;
 
     public void Hit(int damage)
     {
         for (var i = 0; i < damage; i++) Hit();
     }
 
-    public void Destroy()
+    public virtual void Destroy()
     {
-        transform.SetParent(null);
-        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     private void Hit()
     {
         _currentHp--;
         if (_currentHp == 0) return;
-        hitPoints.GetChild(hp - _currentHp - 1).gameObject.SetActive(false);
+        hitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
     }
 
-    protected virtual void Awake()
+    protected virtual void Start()
     {
-        _currentHp = hp;
-        for (var i = 0; i < hitPoints.childCount - hp; i++)
+        _currentHp = MaxHp;
+        for (var i = 0; i < hitPoints.childCount - MaxHp; i++)
         {
             hitPoints.GetChild(i).gameObject.SetActive(false);
         }
 
-        for (var i = hitPoints.childCount - hp; i < hitPoints.childCount; i++)
+        for (var i = hitPoints.childCount - MaxHp; i < hitPoints.childCount; i++)
         {
             hitPoints.GetChild(i).gameObject.SetActive(true);
         }

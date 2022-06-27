@@ -12,15 +12,41 @@ public class Monster : DwellerGeneric<Room>
     }
 
     [SerializeField] private UnityEngine.Color blue, red;
-    [SerializeField] private Color color;
     [SerializeField] private Transform skillTokens;
-    [SerializeField] private Skill[] skills;
 
-    public Color Color => color;
+    private Skill[] _skills;
+    private MonsterDefinition _monsterDefinition;
+
+    public MonsterDefinition MonsterDefinition
+    {
+        get => _monsterDefinition;
+        private set
+        {
+            _monsterDefinition = value;
+            MaxHp = _monsterDefinition.hp;
+            _skills = _monsterDefinition.skills;
+        }
+    }
+
+    public Color Color => MonsterDefinition.color;
+
+    public Monster Initialize(MonsterDefinition monsterDefinition)
+    {
+        MonsterDefinition = monsterDefinition;
+        return this;
+    }
+
+    public override void Destroy()
+    {
+        Location = null;
+        MonsterPool.MonsterDied(MonsterDefinition);
+        ArkhamHorror.AliveMonsters.Remove(this);
+        base.Destroy();
+    }
 
     public IEnumerator Activate()
     {
-        foreach (var skill in skills)
+        foreach (var skill in _skills)
         {
             switch (skill)
             {
@@ -35,6 +61,7 @@ public class Monster : DwellerGeneric<Room>
                     break;
             }
 
+            Debug.Log($"Skill {skill} activated", gameObject);
             yield return null;
         }
     }
@@ -57,19 +84,22 @@ public class Monster : DwellerGeneric<Room>
         Location.Building.Kill();
     }
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
-        for (var i = 0; i < skills.Length; i++)
+        base.Start();
+        if (_skills != null)
         {
-            var skillToken = skillTokens.GetChild(i).GetComponent<global::Skill>();
-            skillToken.gameObject.SetActive(true);
-            skillToken.ChangeSkill(skills[i]);
-        }
+            for (var i = 0; i < _skills.Length; i++)
+            {
+                var skillToken = skillTokens.GetChild(i).GetComponent<global::Skill>();
+                skillToken.gameObject.SetActive(true);
+                skillToken.ChangeSkill(_skills[i]);
+            }
 
-        for (var i = skills.Length; i < skillTokens.childCount; i++)
-        {
-            skillTokens.GetChild(i).gameObject.SetActive(false);
+            for (var i = _skills.Length; i < skillTokens.childCount; i++)
+            {
+                skillTokens.GetChild(i).gameObject.SetActive(false);
+            }
         }
 
         var sprite = GetComponentInChildren<SpriteRenderer>();

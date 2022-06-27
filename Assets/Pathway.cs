@@ -4,6 +4,7 @@ public class Pathway : MonoBehaviour
 {
     [SerializeField] private Building one, two;
     [SerializeField] private Seal seal;
+    [SerializeField] private bool activateSeal;
 
     public void AddSeal()
     {
@@ -22,6 +23,7 @@ public class Pathway : MonoBehaviour
     {
         one.AddAdjacent(two, this);
         two.AddAdjacent(one, this);
+        if (!activateSeal) return;
         AddSeal();
     }
 }
