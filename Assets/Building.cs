@@ -10,7 +10,7 @@ public class Building : MonoBehaviour
     [SerializeField] private int numberOfRooms = 4;
     [SerializeField] private Building redArrow, blueArrow;
     private readonly Dictionary<Building, Pathway> _pathways = new();
-    private readonly List<Monster> _incomingMonsters = new(), _monsterOrder = new();
+    private readonly List<Monster> _incomingMonsters = new(), _killers = new(), _stalkers = new(), _wreckers = new();
     private readonly List<Investigator> _investigators = new();
     private Room[] _rooms;
     private Location[] _investigatorLocations;
@@ -41,13 +41,25 @@ public class Building : MonoBehaviour
 
     public IEnumerator ActivateMonsters()
     {
-        foreach (var monster in _monsterOrder)
+        foreach (var monster in _killers)
         {
-            Debug.Log("Activated monster", monster.gameObject);
+            Debug.Log("Killer monster", monster.gameObject);
+            yield return monster.Activate();
+        }
+        foreach (var monster in _stalkers)
+        {
+            Debug.Log("Stalker monster", monster.gameObject);
+            yield return monster.Activate();
+        }
+        foreach (var monster in _wreckers)
+        {
+            Debug.Log("Wrecker monster", monster.gameObject);
             yield return monster.Activate();
         }
 
-        _monsterOrder.Clear();
+        _killers.Clear();
+        _stalkers.Clear();
+        _wreckers.Clear();
     }
 
     public void MoveInvestigator(Investigator investigator)
@@ -105,9 +117,19 @@ public class Building : MonoBehaviour
         foreach (var monster in _incomingMonsters)
         {
             if (monster.Location && monster.Location.Building != this) continue;
-            _monsterOrder.Add(monster);
+            switch (monster.MainSkill)
+            {
+                case Monster.Skill.Killer:
+                    _killers.Add(monster);
+                    break;
+                case Monster.Skill.Wrecker:
+                    _wreckers.Add(monster);
+                    break;
+                case Monster.Skill.Stalker:
+                    _stalkers.Add(monster);
+                    break;
+            }
         }
-
         _incomingMonsters.Clear();
     }
 

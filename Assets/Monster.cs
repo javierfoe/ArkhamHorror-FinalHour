@@ -6,6 +6,7 @@ public class Monster : DwellerGeneric<Room>
 {
     public enum Skill
     {
+        None,
         Killer,
         Wrecker,
         Stalker
@@ -17,10 +18,10 @@ public class Monster : DwellerGeneric<Room>
     private Skill[] _skills;
     private MonsterDefinition _monsterDefinition;
 
-    public MonsterDefinition MonsterDefinition
+    private MonsterDefinition MonsterDefinition
     {
         get => _monsterDefinition;
-        private set
+        set
         {
             _monsterDefinition = value;
             MaxHp = _monsterDefinition.hp;
@@ -29,6 +30,7 @@ public class Monster : DwellerGeneric<Room>
     }
 
     public Color Color => MonsterDefinition.color;
+    public Skill MainSkill => _skills?.Length > 0 ? _skills[0] : Skill.None;
 
     public Monster Initialize(MonsterDefinition monsterDefinition)
     {
