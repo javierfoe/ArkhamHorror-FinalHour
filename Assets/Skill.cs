@@ -5,9 +5,9 @@ public class Skill : MonoBehaviour
     [SerializeField] private UnityEngine.Color[] colors;
     private SpriteRenderer _spriteRenderer;
 
-    public void ChangeSkill(Monster.Skill skill)
+    public void ChangeSkill(MonsterSkill monsterSkill)
     {
-        _spriteRenderer.color = colors[(int)skill];
+        _spriteRenderer.color = colors[(int)monsterSkill];
     }
     
     private void Awake()

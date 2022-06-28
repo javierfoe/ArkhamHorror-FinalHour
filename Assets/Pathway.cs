@@ -14,7 +14,6 @@ public class Pathway : MonoBehaviour
     public bool MonsterDiesToSeal(Monster monster)
     {
         if (!seal.isActiveAndEnabled) return false;
-        monster.Destroy();
         seal.Use();
         return true;
     }

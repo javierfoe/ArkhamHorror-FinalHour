@@ -442,6 +442,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: gate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: redArrow
       value: 
       objectReference: {fileID: 240607691}
@@ -927,6 +931,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: gate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: redArrow
       value: 
       objectReference: {fileID: 240607691}
@@ -1336,6 +1344,10 @@ PrefabInstance:
     - target: {fileID: 1806175682169032665, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: gate
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: redArrow

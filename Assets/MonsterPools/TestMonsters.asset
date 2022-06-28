@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: TestMonsters
   m_EditorClassIdentifier: 
   monsterDefinitions:
-  - amount: 4
+  - amount: 3
     hp: 1
     color: 0
-    skills: 02000000
-  - amount: 2
+    skills: 00000000
+  - amount: 1
     hp: 1
     color: 1
     skills: 02000000
+  - amount: 1
+    hp: 1
+    color: 1
+    skills: 0100000000000000

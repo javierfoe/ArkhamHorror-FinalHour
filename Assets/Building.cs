@@ -1,19 +1,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class Building : MonoBehaviour
 {
     private const int MaxRooms = 4;
+    private static readonly List<Building> TraversedBuildings = new();
 
+    public Gate gate;
     [SerializeField] private int numberOfRooms = 4;
     [SerializeField] private Building redArrow, blueArrow;
     private readonly Dictionary<Building, Pathway> _pathways = new();
     private readonly List<Monster> _incomingMonsters = new(), _killers = new(), _stalkers = new(), _wreckers = new();
     private readonly List<Investigator> _investigators = new();
+    private int _gatePower;
     private Room[] _rooms;
     private Location[] _investigatorLocations;
+
+    public int AddGate()
+    {
+        return ++_gatePower;
+    }
 
     public void AddInvestigator(Investigator investigator)
     {
@@ -41,25 +51,18 @@ public class Building : MonoBehaviour
 
     public IEnumerator ActivateMonsters()
     {
-        foreach (var monster in _killers)
-        {
-            Debug.Log("Killer monster", monster.gameObject);
-            yield return monster.Activate();
-        }
-        foreach (var monster in _stalkers)
-        {
-            Debug.Log("Stalker monster", monster.gameObject);
-            yield return monster.Activate();
-        }
-        foreach (var monster in _wreckers)
-        {
-            Debug.Log("Wrecker monster", monster.gameObject);
-            yield return monster.Activate();
-        }
+        yield return ActivateMonsters(_killers);
+        yield return ActivateMonsters(_stalkers);
+        yield return ActivateMonsters(_wreckers);
+    }
 
-        _killers.Clear();
-        _stalkers.Clear();
-        _wreckers.Clear();
+    private IEnumerator ActivateMonsters(List<Monster> monsters)
+    {
+        foreach (var monster in monsters)
+        {
+            yield return monster.Activate();
+        }
+        monsters.Clear();
     }
 
     public void MoveInvestigator(Investigator investigator)
@@ -72,7 +75,7 @@ public class Building : MonoBehaviour
         }
     }
 
-    public void IncomingMonster(Monster monster, Building first = null)
+    public void IncomingMonster(Monster monster)
     {
         var roomsAvailable = false;
         for (var i = 0; i < numberOfRooms && !roomsAvailable; i++)
@@ -88,20 +91,23 @@ public class Building : MonoBehaviour
         }
 
         if (roomsAvailable) return;
-
-        MoveMonsterToNextBuilding(monster, first);
+        
+        TraversedBuildings.Add(this);
+        
+        MoveMonsterToNextBuilding(monster);
     }
 
     public void MoveMonster(Monster monster)
     {
-        MoveMonsterToNextBuilding(monster, this);
+        TraversedBuildings.Clear();
+        MoveMonsterToNextBuilding(monster);
     }
 
     public void Wreck(Monster monster)
     {
         monster.Location.Wreckage = true;
         monster.Location = null;
-        IncomingMonster(monster, this);
+        IncomingMonster(monster);
     }
 
     public void Kill()
@@ -117,15 +123,15 @@ public class Building : MonoBehaviour
         foreach (var monster in _incomingMonsters)
         {
             if (monster.Location && monster.Location.Building != this) continue;
-            switch (monster.MainSkill)
+            switch (monster.MainMonsterSkill)
             {
-                case Monster.Skill.Killer:
+                case MonsterSkill.Killer:
                     _killers.Add(monster);
                     break;
-                case Monster.Skill.Wrecker:
+                case MonsterSkill.Wrecker:
                     _wreckers.Add(monster);
                     break;
-                case Monster.Skill.Stalker:
+                case MonsterSkill.Stalker:
                     _stalkers.Add(monster);
                     break;
             }
@@ -133,7 +139,7 @@ public class Building : MonoBehaviour
         _incomingMonsters.Clear();
     }
 
-    private void MoveMonsterToNextBuilding(Monster monster, Building first)
+    private void MoveMonsterToNextBuilding(Monster monster)
     {
         var nextBuilding = monster.Color switch
         {
@@ -146,9 +152,13 @@ public class Building : MonoBehaviour
         
         var deadMonster = pathway.MonsterDiesToSeal(monster);
 
-        if (deadMonster || nextBuilding == first) return;
-
-        nextBuilding.IncomingMonster(monster, first);
+        if (deadMonster || TraversedBuildings.Contains(nextBuilding))
+        {
+            monster.Destroy();
+            return;
+        }
+        
+        nextBuilding.IncomingMonster(monster);
     }
 
     private void Awake()

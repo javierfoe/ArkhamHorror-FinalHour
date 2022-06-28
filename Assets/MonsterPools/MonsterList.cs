@@ -12,5 +12,5 @@ public class MonsterDefinition
 {
     public int amount, hp;
     public Color color;
-    public Monster.Skill[] skills;
+    public MonsterSkill[] skills;
 }

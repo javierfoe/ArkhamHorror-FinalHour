@@ -162,13 +162,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c61d478f81f74b49a9e990618236eaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 3
   hitPoints: {fileID: 7717515973340574079}
+  initializeDefault: 0
   blue: {r: 0.25792095, g: 0.34921968, b: 0.8679245, a: 1}
   red: {r: 0.9150943, g: 0.10791205, b: 0.10791205, a: 1}
-  color: 0
   skillTokens: {fileID: 1186906241}
-  skills: 02000000
 --- !u!4 &7717515973340574079 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8139205046025951645, guid: a1ecd51a98b382541a696a1d25a85809, type: 3}
@@ -182,6 +180,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1186906241}
     m_Modifications:
+    - target: {fileID: 2100478017637546236, guid: 0524a0ebc8f8a1348a82a49eae97a1ce, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2656094871485403223, guid: 0524a0ebc8f8a1348a82a49eae97a1ce, type: 3}
       propertyPath: m_Name
       value: Skill
@@ -246,6 +248,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1186906241}
     m_Modifications:
+    - target: {fileID: 2100478017637546236, guid: 0524a0ebc8f8a1348a82a49eae97a1ce, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2656094871485403223, guid: 0524a0ebc8f8a1348a82a49eae97a1ce, type: 3}
       propertyPath: m_Name
       value: Skill
@@ -310,6 +316,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1186906241}
     m_Modifications:
+    - target: {fileID: 2100478017637546236, guid: 0524a0ebc8f8a1348a82a49eae97a1ce, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2656094871485403223, guid: 0524a0ebc8f8a1348a82a49eae97a1ce, type: 3}
       propertyPath: m_Name
       value: Skill

@@ -1,32 +1,32 @@
 using System.Collections.Generic;
 
-public static class MonsterPool
+public class MonsterPool
 {
-    private static readonly List<MonsterDefinition> Pool = new(), Discard = new();
+    private readonly List<MonsterDefinition> _pool = new(), _discard = new();
     
-    public static void SetStartingPool(IEnumerable<MonsterDefinition> monsterList)
+    public MonsterPool(IEnumerable<MonsterDefinition> monsterList)
     {
-        Pool.AddRange(monsterList);
+        _pool.AddRange(monsterList);
     }
 
-    public static MonsterDefinition SpawnMonster()
+    public MonsterDefinition SpawnMonster()
     {
-        var count = Pool.Count;
+        var count = _pool.Count;
         if (count < 1)
         {
-            if (Discard.Count < 1) return null;
-            Pool.AddRange(Discard);
-            Discard.Clear();
+            if (_discard.Count < 1) return null;
+            _pool.AddRange(_discard);
+            _discard.Clear();
         }
 
         var random = UnityEngine.Random.Range(0, count - 1);
-        var monster = Pool[random];
-        Pool.RemoveAt(random);
+        var monster = _pool[random];
+        _pool.RemoveAt(random);
         return monster;
     }
 
-    public static void MonsterDied(MonsterDefinition monster)
+    public void MonsterDied(MonsterDefinition monster)
     {
-        Discard.Add(monster);
+        _discard.Add(monster);
     }
 }

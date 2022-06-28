@@ -1,27 +1,22 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Monster : DwellerGeneric<Room>
 {
-    public enum Skill
-    {
-        None,
-        Killer,
-        Wrecker,
-        Stalker
-    }
-
     [SerializeField] private UnityEngine.Color blue, red;
     [SerializeField] private Transform skillTokens;
 
-    private Skill[] _skills;
+    private MonsterSkill[] _skills;
     private MonsterDefinition _monsterDefinition;
+    private UnityAction<Monster> _onDestroy;
+    private bool _dead;
 
-    private MonsterDefinition MonsterDefinition
+    public MonsterDefinition MonsterDefinition
     {
         get => _monsterDefinition;
-        set
+        private set
         {
             _monsterDefinition = value;
             MaxHp = _monsterDefinition.hp;
@@ -30,19 +25,20 @@ public class Monster : DwellerGeneric<Room>
     }
 
     public Color Color => MonsterDefinition.color;
-    public Skill MainSkill => _skills?.Length > 0 ? _skills[0] : Skill.None;
+    public MonsterSkill MainMonsterSkill => _skills?.Length > 0 ? _skills[0] : MonsterSkill.None;
 
-    public Monster Initialize(MonsterDefinition monsterDefinition)
+    public Monster Initialize(MonsterDefinition monsterDefinition, UnityAction<Monster> onDestroy = null)
     {
         MonsterDefinition = monsterDefinition;
+        _onDestroy = onDestroy;
         return this;
     }
 
     public override void Destroy()
     {
         Location = null;
-        MonsterPool.MonsterDied(MonsterDefinition);
-        ArkhamHorror.AliveMonsters.Remove(this);
+        _onDestroy?.Invoke(this);
+        _dead = true;
         base.Destroy();
     }
 
@@ -50,20 +46,19 @@ public class Monster : DwellerGeneric<Room>
     {
         foreach (var skill in _skills)
         {
+            if (_dead) break;
             switch (skill)
             {
-                case Skill.Killer:
+                case MonsterSkill.Killer:
                     Kill();
                     break;
-                case Skill.Wrecker:
+                case MonsterSkill.Wrecker:
                     Wreck();
                     break;
-                case Skill.Stalker:
+                case MonsterSkill.Stalker:
                     Move();
                     break;
             }
-
-            Debug.Log($"Skill {skill} activated", gameObject);
             yield return null;
         }
     }
@@ -89,6 +84,7 @@ public class Monster : DwellerGeneric<Room>
     protected override void Start()
     {
         base.Start();
+        
         if (_skills != null)
         {
             for (var i = 0; i < _skills.Length; i++)
@@ -114,10 +110,4 @@ public class Monster : DwellerGeneric<Room>
             _ => throw new ArgumentOutOfRangeException(nameof(Color))
         };
     }
-}
-
-public enum Color
-{
-    Blue,
-    Red
 }
