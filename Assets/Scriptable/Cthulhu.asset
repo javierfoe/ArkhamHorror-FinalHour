@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 308bf78b3e9b50241b4f6cef9a409bbe, type: 3}
+  m_Name: Cthulhu
+  m_EditorClassIdentifier: 
+  monsterDefinitions:
+  - amount: 6
+    hp: 1
+    color: 0
+    skills: 01000000
+    eldritchMinion: 0
+  - amount: 3
+    hp: 3
+    color: 0
+    skills: 0200000002000000
+    eldritchMinion: 1
+  easy:
+    monstersOther: 2
+    portals:
+    - gate: 2
+      standardMonsters: 0
+      eldritchMinions:
+      - eldritchMinion: 0
+        amount: 1
+  normal:
+    monstersOther: 2
+    portals:
+    - gate: 2
+      standardMonsters: 0
+      eldritchMinions:
+      - eldritchMinion: 0
+        amount: 2
+  hard:
+    monstersOther: 2
+    portals:
+    - gate: 2
+      standardMonsters: 0
+      eldritchMinions:
+      - eldritchMinion: 0
+        amount: 4
+    - gate: 1
+      standardMonsters: 0
+      eldritchMinions:
+      - eldritchMinion: 0
+        amount: 1
+      - eldritchMinion: 1
+        amount: 1

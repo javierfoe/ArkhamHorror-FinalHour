@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "MonsterList", menuName = "MonsterList")]
-public class MonsterList : ScriptableObject
+[CreateAssetMenu(fileName = "MonsterList", menuName = "ArkhamHorror/MonsterList")]
+public class Monsters : ScriptableObject
 {
     public MonsterDefinition[] monsterDefinitions;
 }

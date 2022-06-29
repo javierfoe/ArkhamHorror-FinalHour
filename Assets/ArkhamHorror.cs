@@ -1,29 +1,37 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class ArkhamHorror : MonoBehaviour
 {
-    
+
+    [Serializable]
+    public class GateDefinition
+    {
+        public int tesseract, heptagram, trinity;
+    }
+
+    [SerializeField] private GateDefinition gateDefinition;
     [SerializeField] private Transform monsters, buildings, investigators;
     [SerializeField] private Monster monsterPrefab;
     [SerializeField] private Building targetBuilding;
-    [SerializeField] private MonsterList baseMonsterList;
-    [SerializeField] private int constantMonsterAmount;
+    [SerializeField] private Monsters baseMonsters;
     
     private readonly Dictionary<Gate, Building> _gateBuildings = new();
-    private readonly List<Monster> _aliveMonsters = new();
+    private readonly DiscardList<MonsterDefinition> _monsterPool = new();
+    private readonly DiscardList<Gate> _gates = new();
     private Building _ritualBuilding;
     private Monster[] _monsters;
     private Building[] _buildings;
     private Investigator[] _investigators;
-    private MonsterPool _monsterPool;
 
     private void Start()
     {
         List<MonsterDefinition> startingMonsterPool = new();
 
-        foreach (var monsterDef in baseMonsterList.monsterDefinitions)
+        foreach (var monsterDef in baseMonsters.monsterDefinitions)
         {
             for (var i = 0; i < monsterDef.amount; i++)
             {
@@ -31,9 +39,22 @@ public class ArkhamHorror : MonoBehaviour
             }
         }
         
-        _monsterPool = new MonsterPool(startingMonsterPool);
+        _monsterPool.AddRange(startingMonsterPool);
+
+        var random = Random.Range(0, 2);
+        AddGate(gateDefinition.tesseract - (random == 0 ? 1 : 0), Gate.Tesseract);
+        AddGate(gateDefinition.heptagram - (random == 1 ? 1 : 0), Gate.Heptagram);
+        AddGate(gateDefinition.trinity - (random == 2 ? 1 : 0), Gate.Trinity);
 
         StartCoroutine(StartLoop());
+    }
+
+    private void AddGate(int amount, Gate gate)
+    {
+        for (var i = 0; i < amount; i++)
+        {
+            _gates.Add(gate);
+        }
     }
 
     private IEnumerator StartLoop()
@@ -63,7 +84,7 @@ public class ArkhamHorror : MonoBehaviour
             }
         }
         
-        yield return RespawnMonsters();
+        yield return AddRandomGate();
         
         while (true)
         {
@@ -72,7 +93,7 @@ public class ArkhamHorror : MonoBehaviour
                 yield return building.ActivateMonsters();
             }
             
-            yield return RespawnMonsters();
+            yield return AddRandomGate();
 
             foreach (var building in _buildings)
             {
@@ -85,10 +106,9 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator SpawnMonster(Building building)
     {
-        var monsterDefinition = _monsterPool.SpawnMonster();
+        var monsterDefinition = _monsterPool.GetRandom();
         if (monsterDefinition == null) yield break;
         var monster = Instantiate(monsterPrefab, monsters).Initialize(monsterDefinition, MonsterDied);
-        _aliveMonsters.Add(monster);
         building.IncomingMonster(monster);
         yield return null;
     }
@@ -114,31 +134,13 @@ public class ArkhamHorror : MonoBehaviour
 
     private void MonsterDied(Monster monster)
     {
-        _aliveMonsters.Remove(monster);
-        _monsterPool.MonsterDied(monster.MonsterDefinition);
+        _monsterPool.Discard(monster.MonsterDefinition);
     }
 
     private IEnumerator AddRandomGate()
     {
-        var randomGate = (Gate)UnityEngine.Random.Range(0, 2);
+        var randomGate = _gates.GetRandom();
         var building = _gateBuildings[randomGate];
         yield return AddGateAndSpawnMonster(building);
-    }
-
-    private IEnumerator KeepConstantMonsterNumber()
-    {
-        var currentMonsters = _aliveMonsters.Count;
-        if (currentMonsters < constantMonsterAmount)
-        {
-            for (var i = 0; i < constantMonsterAmount - currentMonsters; i++)
-            {
-                yield return SpawnMonster();
-            }
-        }
-    }
-
-    private IEnumerator RespawnMonsters()
-    {
-        yield return AddRandomGate();
     }
 }
