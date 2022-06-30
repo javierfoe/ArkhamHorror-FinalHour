@@ -1,28 +1,31 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class ArkhamHorror : MonoBehaviour
 {
-
     [Serializable]
-    public class GateDefinition
+    public class GatePool
     {
         public int tesseract, heptagram, trinity;
     }
 
-    [SerializeField] private GateDefinition gateDefinition;
+    [SerializeField] private GatePool gatePool;
     [SerializeField] private Transform monsters, buildings, investigators;
     [SerializeField] private Monster monsterPrefab;
     [SerializeField] private Building targetBuilding;
     [SerializeField] private Monsters baseMonsters;
-    
+    [SerializeField] private Difficulty difficulty;
+    [SerializeField] private AncientOne eldritchHorror;
+    [SerializeField] private EldritchHorror cthulhu, umordhoth, shuddemell;
+
     private readonly Dictionary<Gate, Building> _gateBuildings = new();
-    private readonly DiscardList<MonsterDefinition> _monsterPool = new();
-    private readonly DiscardList<Gate> _gates = new();
-    private Building _ritualBuilding;
+    private readonly Pool<MonsterDefinition> _monsterPool = new();
+    private readonly Pool<Gate> _gates = new();
     private Monster[] _monsters;
     private Building[] _buildings;
     private Investigator[] _investigators;
@@ -38,15 +41,76 @@ public class ArkhamHorror : MonoBehaviour
                 startingMonsterPool.Add(monsterDef);
             }
         }
-        
+
         _monsterPool.AddRange(startingMonsterPool);
 
-        var random = Random.Range(0, 2);
-        AddGate(gateDefinition.tesseract - (random == 0 ? 1 : 0), Gate.Tesseract);
-        AddGate(gateDefinition.heptagram - (random == 1 ? 1 : 0), Gate.Heptagram);
-        AddGate(gateDefinition.trinity - (random == 2 ? 1 : 0), Gate.Trinity);
+        var oneLessGate = Random.Range(0, 2);
+        AddGate(gatePool.tesseract - (oneLessGate == 0 ? 1 : 0), Gate.Tesseract);
+        AddGate(gatePool.heptagram - (oneLessGate == 1 ? 1 : 0), Gate.Heptagram);
+        AddGate(gatePool.trinity - (oneLessGate == 2 ? 1 : 0), Gate.Trinity);
+
+        _buildings = buildings.GetComponentsInChildren<Building>();
+
+        foreach (var building in _buildings)
+        {
+            building.FinishMonsterMovement();
+            Gate gate = building.gate;
+            if (gate is Gate.None or Gate.Ritual) continue;
+            if (_gateBuildings.ContainsKey(gate))
+            {
+                Debug.LogWarning(
+                    $"A building with gate {gate} already exists: {_gateBuildings[gate]}. Ignoring this building",
+                    gameObject);
+                continue;
+            }
+
+            _gateBuildings.Add(gate, building);
+            AddGate(building);
+        }
 
         StartCoroutine(StartLoop());
+    }
+
+    public IEnumerator SelectEldritchHorrorDifficulty(AncientOne horror, Difficulty difficulty)
+    {
+        var selectedHorror = horror switch
+        {
+            AncientOne.Cthulhu => cthulhu,
+            AncientOne.Umôrdhoth => umordhoth,
+            AncientOne.ShuddeMell => shuddemell
+        };
+
+        var difficultySetting = difficulty switch
+        {
+            Difficulty.Easy => selectedHorror.easy,
+            Difficulty.Normal => selectedHorror.normal,
+            Difficulty.Hard => selectedHorror.hard
+        };
+
+        foreach (var building in _buildings)
+        {
+            if (building.gate != Gate.None) continue;
+            yield return SpawnMonsters(difficultySetting.monstersOther, building);
+        }
+
+        foreach (var startingMonsters in difficultySetting.portals)
+        {
+            var gate = startingMonsters.gate;
+            switch (gate)
+            {
+                case Gate.Heptagram:
+                case Gate.Tesseract:
+                case Gate.Trinity:
+                    yield return SpawnStartingMonsters(_gateBuildings[gate], selectedHorror, startingMonsters);
+                    break;
+                case Gate.None:
+                    foreach (var building in _gateBuildings.Values)
+                    {
+                        yield return SpawnStartingMonsters(building, selectedHorror, startingMonsters);
+                    }
+                    break;
+            }
+        }
     }
 
     private void AddGate(int amount, Gate gate)
@@ -59,48 +123,50 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator StartLoop()
     {
+        yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
 
-        _buildings = buildings.GetComponentsInChildren<Building>();
-        foreach (var building in _buildings)
-        {
-            building.FinishMonsterMovement();
-            Gate gate = building.gate;
-            switch (gate)
-            {
-                case Gate.Ritual:
-                    _ritualBuilding = building;
-                    break;
-                case Gate.Heptagram:
-                case Gate.Tesseract:
-                case Gate.Trinity:
-                    if (_gateBuildings.ContainsKey(gate))
-                    {
-                        Debug.LogWarning($"A building with a gate {gate} already exists: {_gateBuildings[gate]}. Ignoring this building", gameObject);
-                        continue;
-                    }
-                    _gateBuildings.Add(gate, building);
-                    AddGate(building);
-                    break;
-            }
-        }
-        
-        yield return AddRandomGate();
-        
         while (true)
         {
             foreach (var building in _buildings)
             {
                 yield return building.ActivateMonsters();
             }
-            
+
             yield return AddRandomGate();
 
             foreach (var building in _buildings)
             {
                 building.FinishMonsterMovement();
             }
-            
+
             yield return null;
+        }
+    }
+
+    private IEnumerator SpawnStartingMonsters(Building building, EldritchHorror eldritchHorror,
+        StartingMonsters startingMonsters)
+    {
+        yield return SpawnMonsters(startingMonsters.standardMonsters, building);
+        foreach (var eldritchMinion in startingMonsters.eldritchMinions)
+        {
+            var eldritchMinionDefinition = eldritchHorror.GetEldritchMinion(eldritchMinion.eldritchMinion);
+            yield return SpawnMonsters(eldritchMinion.amount, eldritchMinionDefinition, building);
+        }
+    }
+
+    private IEnumerator SpawnMonsters(int amount, MonsterDefinition monsterDefinition, Building building)
+    {
+        for (var i = 0; i < amount; i++)
+        {
+            yield return SpawnMonster(monsterDefinition, building);
+        }
+    }
+
+    private IEnumerator SpawnMonsters(int amount, Building building)
+    {
+        for (var i = 0; i < amount; i++)
+        {
+            yield return SpawnMonster(building);
         }
     }
 
@@ -108,14 +174,14 @@ public class ArkhamHorror : MonoBehaviour
     {
         var monsterDefinition = _monsterPool.GetRandom();
         if (monsterDefinition == null) yield break;
+        yield return SpawnMonster(monsterDefinition, building);
+    }
+
+    private IEnumerator SpawnMonster(MonsterDefinition monsterDefinition, Building building)
+    {
         var monster = Instantiate(monsterPrefab, monsters).Initialize(monsterDefinition, MonsterDied);
         building.IncomingMonster(monster);
         yield return null;
-    }
-
-    private IEnumerator SpawnMonster()
-    {
-        yield return SpawnMonster(targetBuilding);
     }
 
     private int AddGate(Building building)

@@ -4,15 +4,29 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EldritchHorror", menuName = "ArkhamHorror/EldritchHorror")]
 public class EldritchHorror : ScriptableObject
 {
-    public EldritchMinionDefinition[] monsterDefinitions;
+    [SerializeField]
+    private EldritchMinionDefinition[] monsterDefinitions;
     public DifficultySetting easy, normal, hard;
+
+    public MonsterDefinition GetEldritchMinion(EldritchMinion eldritchMinion)
+    {
+        MonsterDefinition result = null;
+        foreach (var monster in monsterDefinitions)
+        {
+            if (eldritchMinion != monster.eldritchMinion) continue;
+            result = monster.monsterDefinition;
+            break;
+        }
+        return result;
+    }
 }
 
 
 [Serializable]
-public class EldritchMinionDefinition : MonsterDefinition
+public class EldritchMinionDefinition
 {
     public EldritchMinion eldritchMinion;
+    public MonsterDefinition monsterDefinition;
 }
 
 [Serializable]

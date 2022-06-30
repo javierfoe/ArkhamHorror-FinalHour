@@ -21,6 +21,20 @@ public enum Gate
     None = 4,
 }
 
+public enum AncientOne
+{
+    Cthulhu,
+    ShuddeMell,
+    Umôrdhoth
+}
+
+public enum Difficulty
+{
+    Easy,
+    Normal,
+    Hard
+}
+
 public enum Clue
 {
     Diamond,

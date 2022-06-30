@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: "Um\xF4rdhoth"
   m_EditorClassIdentifier: 
   monsterDefinitions:
-  - amount: 3
-    hp: 0
-    color: 0
-    skills: 00000000
-    eldritchMinion: 2
+  - eldritchMinion: 2
+    monsterDefinition:
+      amount: 3
+      hp: 0
+      color: 0
+      skills: 00000000
   easy:
     monstersOther: 1
     portals:

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class DiscardList<T> : List<T>
+public class Pool<T> : List<T>
 {
     private readonly List<T> _discard = new();
 

@@ -13,16 +13,18 @@ MonoBehaviour:
   m_Name: Cthulhu
   m_EditorClassIdentifier: 
   monsterDefinitions:
-  - amount: 6
-    hp: 1
-    color: 0
-    skills: 01000000
-    eldritchMinion: 0
-  - amount: 3
-    hp: 3
-    color: 0
-    skills: 0200000002000000
-    eldritchMinion: 1
+  - eldritchMinion: 0
+    monsterDefinition:
+      amount: 6
+      hp: 1
+      color: 0
+      skills: 01000000
+  - eldritchMinion: 1
+    monsterDefinition:
+      amount: 2
+      hp: 3
+      color: 0
+      skills: 0200000002000000
   easy:
     monstersOther: 2
     portals:

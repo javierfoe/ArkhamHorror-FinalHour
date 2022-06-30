@@ -147,9 +147,16 @@ public class Building : MonoBehaviour
             Color.Red => redArrow,
             _ => throw new ArgumentOutOfRangeException()
         };
+        Pathway pathway = null;
+        try
+        {
+            pathway = _pathways[nextBuilding];
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"A pathway is missing between {gameObject} and {nextBuilding}", gameObject);
+        }
 
-        var pathway = _pathways[nextBuilding];
-        
         var deadMonster = pathway.MonsterDiesToSeal(monster);
 
         if (deadMonster || TraversedBuildings.Contains(nextBuilding))
