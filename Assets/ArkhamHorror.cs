@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
@@ -29,6 +28,7 @@ public class ArkhamHorror : MonoBehaviour
     private Monster[] _monsters;
     private Building[] _buildings;
     private Investigator[] _investigators;
+    private AncientOneOmen _ancientOneOmen;
 
     private void Start()
     {
@@ -73,18 +73,28 @@ public class ArkhamHorror : MonoBehaviour
 
     public IEnumerator SelectEldritchHorrorDifficulty(AncientOne horror, Difficulty difficulty)
     {
-        var selectedHorror = horror switch
+        EldritchHorror selectedHorror;
+        switch (horror)
         {
-            AncientOne.Cthulhu => cthulhu,
-            AncientOne.Umôrdhoth => umordhoth,
-            AncientOne.ShuddeMell => shuddemell
-        };
+            case AncientOne.Umôrdhoth:
+                selectedHorror = umordhoth;
+                _ancientOneOmen = new UmordhothOmen(umordhoth.intervalMinimums);
+                break;
+            case AncientOne.ShuddeMell:
+                selectedHorror = shuddemell;
+                _ancientOneOmen = new ShuddeMellOmen(shuddemell.intervalMinimums);
+                break;
+            default:
+                selectedHorror = cthulhu;
+                _ancientOneOmen = new CthulhuOmen(cthulhu.intervalMinimums);
+                break;
+        }
 
         var difficultySetting = difficulty switch
         {
-            Difficulty.Easy => selectedHorror.easy,
             Difficulty.Normal => selectedHorror.normal,
-            Difficulty.Hard => selectedHorror.hard
+            Difficulty.Hard => selectedHorror.hard,
+            _ => selectedHorror.easy
         };
 
         foreach (var building in _buildings)
@@ -108,6 +118,7 @@ public class ArkhamHorror : MonoBehaviour
                     {
                         yield return SpawnStartingMonsters(building, selectedHorror, startingMonsters);
                     }
+
                     break;
             }
         }

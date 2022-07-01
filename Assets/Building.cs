@@ -62,6 +62,7 @@ public class Building : MonoBehaviour
         {
             yield return monster.Activate();
         }
+
         monsters.Clear();
     }
 
@@ -91,9 +92,9 @@ public class Building : MonoBehaviour
         }
 
         if (roomsAvailable) return;
-        
+
         TraversedBuildings.Add(this);
-        
+
         MoveMonsterToNextBuilding(monster);
     }
 
@@ -136,6 +137,7 @@ public class Building : MonoBehaviour
                     break;
             }
         }
+
         _incomingMonsters.Clear();
     }
 
@@ -147,24 +149,21 @@ public class Building : MonoBehaviour
             Color.Red => redArrow,
             _ => throw new ArgumentOutOfRangeException()
         };
-        Pathway pathway = null;
-        try
-        {
-            pathway = _pathways[nextBuilding];
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"A pathway is missing between {gameObject} and {nextBuilding}", gameObject);
-        }
 
-        var deadMonster = pathway.MonsterDiesToSeal(monster);
+        var deadMonster = false;
+
+        if (_pathways.Count > 0 && _pathways.ContainsKey(nextBuilding))
+        {
+            var pathway = _pathways[nextBuilding];
+            deadMonster = pathway.MonsterDiesToSeal(monster);
+        }
 
         if (deadMonster || TraversedBuildings.Contains(nextBuilding))
         {
             monster.Destroy();
             return;
         }
-        
+
         nextBuilding.IncomingMonster(monster);
     }
 
@@ -176,7 +175,7 @@ public class Building : MonoBehaviour
         {
             location.Building = this;
         }
-        
+
         for (var i = 0; i < numberOfRooms; i++)
         {
             _rooms[i].Building = this;
@@ -186,5 +185,12 @@ public class Building : MonoBehaviour
         {
             _rooms[i].gameObject.SetActive(false);
         }
+    }
+
+    private void Start()
+    {
+        var offset = new Vector3(0.25f, 0.25f, 0);
+        Debug.DrawLine(transform.position + offset, redArrow.transform.position, UnityEngine.Color.red, 100);
+        Debug.DrawLine(transform.position - offset, blueArrow.transform.position, UnityEngine.Color.blue, 100);
     }
 }

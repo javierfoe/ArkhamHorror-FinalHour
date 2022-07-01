@@ -223,10 +223,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 1384283703}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 00/01
@@ -481,10 +477,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 1484379093}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 01/11
@@ -727,10 +719,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 1484379093}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 10/11
@@ -993,7 +981,7 @@ PrefabInstance:
     - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: redArrow
       value: 
-      objectReference: {fileID: 2008119874}
+      objectReference: {fileID: 1384283703}
     - target: {fileID: 8225987552833746824, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: blueArrow
       value: 
@@ -1028,10 +1016,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 2008119874}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 01/10
@@ -1176,10 +1160,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 625138249}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 02/12
@@ -1391,10 +1371,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 1484379093}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 02/11
@@ -1506,10 +1482,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 2008119874}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 00/10
@@ -1664,10 +1636,6 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 1484379093}
-    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
-      propertyPath: activateSeal
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 11/12

@@ -4,9 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EldritchHorror", menuName = "ArkhamHorror/EldritchHorror")]
 public class EldritchHorror : ScriptableObject
 {
+    public int[] intervalMinimums;
+    public DifficultySetting easy, normal, hard;
+    
     [SerializeField]
     private EldritchMinionDefinition[] monsterDefinitions;
-    public DifficultySetting easy, normal, hard;
 
     public MonsterDefinition GetEldritchMinion(EldritchMinion eldritchMinion)
     {
@@ -21,6 +23,11 @@ public class EldritchHorror : ScriptableObject
     }
 }
 
+[Serializable]
+public class Interval
+{
+    public int min, max;
+}
 
 [Serializable]
 public class EldritchMinionDefinition

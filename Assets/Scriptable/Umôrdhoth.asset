@@ -12,13 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 308bf78b3e9b50241b4f6cef9a409bbe, type: 3}
   m_Name: "Um\xF4rdhoth"
   m_EditorClassIdentifier: 
-  monsterDefinitions:
-  - eldritchMinion: 2
-    monsterDefinition:
-      amount: 3
-      hp: 0
-      color: 0
-      skills: 00000000
+  intervalMinimums: 060000000300000001000000
   easy:
     monstersOther: 1
     portals:
@@ -43,3 +37,10 @@ MonoBehaviour:
       eldritchMinions:
       - eldritchMinion: 2
         amount: 1
+  monsterDefinitions:
+  - eldritchMinion: 2
+    monsterDefinition:
+      amount: 3
+      hp: 0
+      color: 0
+      skills: 00000000

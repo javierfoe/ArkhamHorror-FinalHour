@@ -12,19 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 308bf78b3e9b50241b4f6cef9a409bbe, type: 3}
   m_Name: Cthulhu
   m_EditorClassIdentifier: 
-  monsterDefinitions:
-  - eldritchMinion: 0
-    monsterDefinition:
-      amount: 6
-      hp: 1
-      color: 0
-      skills: 01000000
-  - eldritchMinion: 1
-    monsterDefinition:
-      amount: 2
-      hp: 3
-      color: 0
-      skills: 0200000002000000
+  intervalMinimums: 07000000050000000300000001000000
   easy:
     monstersOther: 2
     portals:
@@ -56,3 +44,16 @@ MonoBehaviour:
         amount: 1
       - eldritchMinion: 1
         amount: 1
+  monsterDefinitions:
+  - eldritchMinion: 0
+    monsterDefinition:
+      amount: 6
+      hp: 1
+      color: 0
+      skills: 01000000
+  - eldritchMinion: 1
+    monsterDefinition:
+      amount: 2
+      hp: 3
+      color: 0
+      skills: 0200000002000000
