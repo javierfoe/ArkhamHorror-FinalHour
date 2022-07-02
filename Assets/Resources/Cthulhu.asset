@@ -29,6 +29,12 @@ MonoBehaviour:
       eldritchMinions:
       - eldritchMinion: 0
         amount: 2
+    - gate: 0
+      standardMonsters: 2
+      eldritchMinions: []
+    - gate: 1
+      standardMonsters: 2
+      eldritchMinions: []
   hard:
     monstersOther: 2
     portals:
@@ -44,6 +50,9 @@ MonoBehaviour:
         amount: 1
       - eldritchMinion: 1
         amount: 1
+    - gate: 0
+      standardMonsters: 2
+      eldritchMinions: []
   monsterDefinitions:
   - eldritchMinion: 0
     monsterDefinition:

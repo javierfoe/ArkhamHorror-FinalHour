@@ -642,17 +642,12 @@ MonoBehaviour:
     tesseract: 0
     heptagram: 0
     trinity: 0
-  monsters: {fileID: 2068951566}
   buildings: {fileID: 1240850457}
   investigators: {fileID: 836005138}
   monsterPrefab: {fileID: 1029407920, guid: 545fcbcb83be5f949b4e30eca35d44f9, type: 3}
-  targetBuilding: {fileID: 240607691}
   baseMonsters: {fileID: 11400000, guid: bae7345d0eaecc2439e90c2820a1ca5f, type: 2}
-  difficulty: 2
+  difficulty: 0
   eldritchHorror: 2
-  cthulhu: {fileID: 11400000, guid: c0009af77a23a73418693325f5c7ff22, type: 2}
-  umordhoth: {fileID: 11400000, guid: 2b072b78a6dadf847a27972539548152, type: 2}
-  shuddemell: {fileID: 11400000, guid: 3bd6c9f2e5954564d9bde2b4fa290fe6, type: 2}
 --- !u!4 &712263211
 Transform:
   m_ObjectHideFlags: 0
@@ -666,7 +661,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &836005137
 GameObject:
@@ -701,7 +696,7 @@ Transform:
   - {fileID: 1741697155}
   - {fileID: 611310444}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1190736349
 PrefabInstance:
@@ -1687,37 +1682,6 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
---- !u!1 &2068951565
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2068951566}
-  m_Layer: 0
-  m_Name: Monsters
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2068951566
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2068951565}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2120979887 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3103519117643460734, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}

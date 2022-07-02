@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterDefinitions:
   - amount: 5
-    hp: 1
+    hp: 2
     color: 0
-    skills: 01000000
+    skills: 00000000
   - amount: 4
     hp: 1
     color: 1

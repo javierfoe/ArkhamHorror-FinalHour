@@ -10,23 +10,17 @@ public class EldritchHorror : ScriptableObject
     [SerializeField]
     private EldritchMinionDefinition[] monsterDefinitions;
 
-    public MonsterDefinition GetEldritchMinion(EldritchMinion eldritchMinion)
+    public EldritchMinionDefinition GetEldritchMinion(EldritchMinion eldritchMinion)
     {
-        MonsterDefinition result = null;
+        EldritchMinionDefinition result = null;
         foreach (var monster in monsterDefinitions)
         {
             if (eldritchMinion != monster.eldritchMinion) continue;
-            result = monster.monsterDefinition;
+            result = monster;
             break;
         }
-        return result;
+        return new EldritchMinionDefinition(result);
     }
-}
-
-[Serializable]
-public class Interval
-{
-    public int min, max;
 }
 
 [Serializable]
@@ -34,6 +28,12 @@ public class EldritchMinionDefinition
 {
     public EldritchMinion eldritchMinion;
     public MonsterDefinition monsterDefinition;
+
+    public EldritchMinionDefinition(EldritchMinionDefinition copy)
+    {
+        eldritchMinion = copy.eldritchMinion;
+        monsterDefinition = new MonsterDefinition(copy.monsterDefinition);
+    }
 }
 
 [Serializable]

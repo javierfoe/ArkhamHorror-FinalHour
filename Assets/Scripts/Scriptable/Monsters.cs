@@ -13,4 +13,13 @@ public class MonsterDefinition
     public int amount, hp;
     public Color color;
     public MonsterSkill[] skills;
+
+    public MonsterDefinition(MonsterDefinition copy)
+    {
+        amount = copy.amount;
+        hp = copy.hp;
+        color = copy.color;
+        skills = new MonsterSkill[copy.skills.Length];
+        Array.Copy(copy.skills, skills, copy.skills.Length);
+    }
 }
