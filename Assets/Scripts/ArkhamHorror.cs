@@ -26,6 +26,7 @@ public class ArkhamHorror : MonoBehaviour
     private readonly Dictionary<Gate, Building> _gateBuildings = new();
     private readonly Pool<MonsterDefinition> _monsterPool = new();
     private readonly Pool<Gate> _gates = new();
+    private Building _ritual;
     private Monster[] _monsters;
     private Building[] _buildings;
     private Investigator[] _investigators;
@@ -41,17 +42,17 @@ public class ArkhamHorror : MonoBehaviour
         switch (horror)
         {
             case AncientOne.Umôrdhoth:
-                _ancientOneOmen = new UmordhothOmen(difficulty);
+                _ancientOneOmen = new UmordhothOmen(difficulty, this);
                 break;
             case AncientOne.ShuddeMell:
-                _ancientOneOmen = new ShuddeMellOmen(difficulty);
+                _ancientOneOmen = new ShuddeMellOmen(difficulty, this);
                 break;
             default:
-                _ancientOneOmen = new CthulhuOmen(difficulty);
+                _ancientOneOmen = new CthulhuOmen(difficulty, this);
                 break;
         }
 
-        yield return _ancientOneOmen.SpawnStartingMonsters(this);
+        yield return _ancientOneOmen.SpawnStartingMonsters();
     }
 
     public IEnumerator SpawnMonstersOtherBuildings(int amount)
@@ -72,10 +73,64 @@ public class ArkhamHorror : MonoBehaviour
         {
             if (gate == Gate.None && building.Gate is Gate.None or Gate.Ritual
                 || gate != Gate.None && building.Gate != gate) continue;
-            for (var i = 0; i < amount; i++)
+            yield return SpawnMonsters(amount, building);
+        }
+    }
+
+    public IEnumerator RemoveRandomSeal()
+    {
+        List<Seal> seals = new();
+        foreach (var building in _buildings)
+        {
+            foreach (var seal in building.GetActiveSeals())
             {
-                yield return SpawnMonster(building);
+                if (seals.Contains(seal)) continue;
+                seals.Add(seal);
             }
+        }
+
+        var random = Random.Range(0, seals.Count - 1);
+        yield return seals[random].Disable();
+    }
+
+    public IEnumerator DamageRitual(int amount)
+    {
+        yield return _ritual.Wreck(amount);
+    }
+
+    public void IncomingMonsterLowestGate(Monster monster)
+    {
+        var aux = 10;
+        Building lowestGatePower = null;
+        foreach (var building in _buildings)
+        {
+            if (building.Gate is Gate.None or Gate.Ritual) continue;
+            var gatePower = building.GatePower;
+            if (gatePower >= aux) continue;
+            lowestGatePower = building;
+            aux = gatePower;
+        }
+
+        if (lowestGatePower != null)
+        {
+            lowestGatePower.IncomingMonster(monster);
+        }
+    }
+
+    public void IncomingMonster(Monster monster, Gate gate)
+    {
+        foreach (var building in _buildings)
+        {
+            if (gate != building.Gate) continue;
+            building.IncomingMonster(monster);
+        }
+    }
+
+    public IEnumerator SpawnMonsters(int amount, Building building)
+    {
+        for (var i = 0; i < amount; i++)
+        {
+            yield return SpawnMonster(building);
         }
     }
 
@@ -111,6 +166,18 @@ public class ArkhamHorror : MonoBehaviour
     private IEnumerator StartLoop()
     {
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
+        _ancientOneOmen.AddOmenSymbols(3);
+        yield return _ancientOneOmen.ActivateOmenSymbols();
+        _ancientOneOmen.AddOmenSymbols(3);
+        yield return _ancientOneOmen.ActivateOmenSymbols();
+        _ancientOneOmen.AddOmenSymbols(6);
+        yield return _ancientOneOmen.ActivateOmenSymbols();
+        _ancientOneOmen.AddOmenSymbols(6);
+        yield return _ancientOneOmen.ActivateOmenSymbols();
+        _ancientOneOmen.AddOmenSymbols(6);
+        yield return _ancientOneOmen.ActivateOmenSymbols();
+        _ancientOneOmen.AddOmenSymbols(6);
+        yield return _ancientOneOmen.ActivateOmenSymbols();
 /*
         while (true)
         {
@@ -195,17 +262,26 @@ public class ArkhamHorror : MonoBehaviour
         {
             building.FinishMonsterMovement();
             Gate gate = building.Gate;
-            if (gate is Gate.None or Gate.Ritual) continue;
-            if (_gateBuildings.ContainsKey(gate))
+            switch (gate)
             {
-                Debug.LogWarning(
-                    $"A building with gate {gate} already exists: {_gateBuildings[gate]}. Ignoring this building",
-                    gameObject);
-                continue;
-            }
+                case Gate.None:
+                    break;
+                case Gate.Ritual:
+                    _ritual = building;
+                    break;
+                default:
+                    if (_gateBuildings.ContainsKey(gate))
+                    {
+                        Debug.LogWarning(
+                            $"A building with gate {gate} already exists: {_gateBuildings[gate]}. Ignoring this building",
+                            gameObject);
+                        continue;
+                    }
 
-            _gateBuildings.Add(gate, building);
-            AddGate(building);
+                    _gateBuildings.Add(gate, building);
+                    AddGate(building);
+                    break;
+            }
         }
 
         StartCoroutine(StartLoop());

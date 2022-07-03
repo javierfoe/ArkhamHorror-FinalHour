@@ -4,20 +4,22 @@ using UnityEngine;
 
 public abstract class AncientOneOmen
 {
-    private readonly int[] _variants;
     private readonly DifficultySetting _difficulty;
-    private readonly EldritchHorror _eldritchHorror;
+    protected readonly EldritchHorror EldritchHorror;
+    protected readonly ArkhamHorror ArkhamHorror;
+    
     private int _omenSymbols;
     protected abstract string EldritchHorrorResource { get; }
 
-    protected AncientOneOmen(Difficulty difficulty)
+    protected AncientOneOmen(Difficulty difficulty, ArkhamHorror arkhamHorror)
     {
-        _eldritchHorror = Resources.Load(EldritchHorrorResource) as EldritchHorror;
+        ArkhamHorror = arkhamHorror;
+        EldritchHorror = Resources.Load(EldritchHorrorResource) as EldritchHorror;
         _difficulty = difficulty switch
         {
-            Difficulty.Normal => _eldritchHorror.normal,
-            Difficulty.Hard => _eldritchHorror.hard,
-            _ => _eldritchHorror.easy
+            Difficulty.Normal => EldritchHorror.normal,
+            Difficulty.Hard => EldritchHorror.hard,
+            _ => EldritchHorror.easy
         };
     }
 
@@ -26,25 +28,19 @@ public abstract class AncientOneOmen
         _omenSymbols += omens;
     }
 
-    public void ActivateOmenSymbols()
+    public IEnumerator ActivateOmenSymbols()
     {
-        for (var i = 0; i < _variants.Length; i++)
-        {
-            if (_variants[i] >= _omenSymbols) continue;
-            ActivateInterval(i);
-            break;
-        }
-
+        yield return ActivateInterval(_omenSymbols);
         _omenSymbols = 0;
     }
 
-    public IEnumerator SpawnStartingMonsters(ArkhamHorror arkhamHorror)
+    public IEnumerator SpawnStartingMonsters()
     {
-        yield return arkhamHorror.SpawnMonstersOtherBuildings(_difficulty.monstersOther);
+        yield return ArkhamHorror.SpawnMonstersOtherBuildings(_difficulty.monstersOther);
         foreach (var portal in _difficulty.portals)
         {
             var gate = portal.gate;
-            yield return arkhamHorror.SpawnMonstersGate(portal.standardMonsters, gate);
+            yield return ArkhamHorror.SpawnMonstersGate(portal.standardMonsters, gate);
             var eldritchMinions = portal.eldritchMinions;
             var length = eldritchMinions.Length;
             if (length < 1) continue;
@@ -52,11 +48,11 @@ public abstract class AncientOneOmen
             for (var i = 0; i < length; i++)
             {
                 var eldritchMinion = eldritchMinions[i];
-                minionDefinitions[i] = _eldritchHorror.GetEldritchMinion(eldritchMinion.eldritchMinion);
+                minionDefinitions[i] = EldritchHorror.GetEldritchMinion(eldritchMinion.eldritchMinion);
                 minionDefinitions[i].monsterDefinition.amount = eldritchMinion.amount;
             }
 
-            EldritchMinionsSpawn eldritchMinionsSpawn = arkhamHorror.SpawnEldritchMinionsGate(minionDefinitions, gate);
+            EldritchMinionsSpawn eldritchMinionsSpawn = ArkhamHorror.SpawnEldritchMinionsGate(minionDefinitions, gate);
             yield return eldritchMinionsSpawn;
             foreach (var monsters in eldritchMinionsSpawn.Monsters)
             {
@@ -67,5 +63,5 @@ public abstract class AncientOneOmen
 
     protected abstract void AddMonsters(EldritchMinion eldritchMinion, List<Monster> monsters);
 
-    protected abstract void ActivateInterval(int index);
+    protected abstract IEnumerator ActivateInterval(int omenSymbols);
 }

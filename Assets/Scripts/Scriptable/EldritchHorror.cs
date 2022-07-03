@@ -4,7 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EldritchHorror", menuName = "ArkhamHorror/EldritchHorror")]
 public class EldritchHorror : ScriptableObject
 {
-    public int[] intervalMinimums;
     public DifficultySetting easy, normal, hard;
     
     [SerializeField]

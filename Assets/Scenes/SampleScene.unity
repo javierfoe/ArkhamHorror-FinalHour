@@ -477,6 +477,10 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 1484379093}
+    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
+      propertyPath: halfSeal
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 01/11
@@ -646,7 +650,7 @@ MonoBehaviour:
   investigators: {fileID: 836005138}
   monsterPrefab: {fileID: 1029407920, guid: 545fcbcb83be5f949b4e30eca35d44f9, type: 3}
   baseMonsters: {fileID: 11400000, guid: bae7345d0eaecc2439e90c2820a1ca5f, type: 2}
-  difficulty: 0
+  difficulty: 1
   eldritchHorror: 2
 --- !u!4 &712263211
 Transform:
@@ -1155,6 +1159,10 @@ PrefabInstance:
       propertyPath: two
       value: 
       objectReference: {fileID: 625138249}
+    - target: {fileID: 1041216576572196309, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
+      propertyPath: halfSeal
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3103519117643460733, guid: 70655703757bd6b43a03c93ce93bfed2, type: 3}
       propertyPath: m_Name
       value: Pathway 02/12

@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class UmordhothOmen : AncientOneOmen
 {
@@ -7,7 +9,7 @@ public class UmordhothOmen : AncientOneOmen
 
     protected override string EldritchHorrorResource => UmordhothPath;
 
-    public UmordhothOmen(Difficulty difficulty) : base(difficulty)
+    public UmordhothOmen(Difficulty difficulty, ArkhamHorror arkhamHorror) : base(difficulty, arkhamHorror)
     {
     }
 
@@ -17,8 +19,20 @@ public class UmordhothOmen : AncientOneOmen
         _ghouls.AddRange(monsters);
     }
 
-    protected override void ActivateInterval(int index)
+    protected override IEnumerator ActivateInterval(int symbols)
     {
-        throw new System.NotImplementedException();
+        switch (symbols)
+        {
+            case > 5:
+                var random = Random.Range(0, _ghouls.Count - 1);
+                var building = _ghouls[random].Location.Building;
+                yield return ArkhamHorror.SpawnMonsters(2, building);
+                break;
+            case > 2:
+                yield return ArkhamHorror.RemoveRandomSeal();
+                break;
+            case > 0:
+                break;
+        }
     }
 }

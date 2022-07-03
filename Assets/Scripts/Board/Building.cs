@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -16,7 +15,6 @@ public class Building : MonoBehaviour
     private readonly Dictionary<Building, Pathway> _pathways = new();
     private readonly List<Monster> _incomingMonsters = new(), _killers = new(), _stalkers = new(), _wreckers = new();
     private readonly List<Investigator> _investigators = new();
-    private int _gatePower;
     private Room[] _rooms;
     private Location[] _investigatorLocations;
 
@@ -26,9 +24,39 @@ public class Building : MonoBehaviour
         private set => gate = value;
     }
 
+    public int GatePower
+    {
+        get;
+        private set;
+    }
+
     public int AddGate()
     {
-        return ++_gatePower;
+        return ++GatePower;
+    }
+
+    public List<Seal> GetActiveSeals()
+    {
+        var result = new List<Seal>();
+        foreach (var pathway in _pathways.Values)
+        {
+            var seal = pathway.Seal;
+            if (!seal.Enabled) continue;
+            result.Add(seal);
+        }
+        return result;
+    }
+
+    public IEnumerator Wreck(int amount)
+    {
+        for(int i = 0, damage = 0; i < _rooms.Length && damage < amount; i++)
+        {
+            var room = _rooms[i];
+            if (!room.IsFree) continue;
+            damage++;
+            room.Wreckage = true;
+            yield return null;
+        }
     }
 
     public void AddInvestigator(Investigator investigator)

@@ -5,16 +5,17 @@ public class Pathway : MonoBehaviour
     [SerializeField] private Building one, two;
     [SerializeField] private Seal seal;
     [SerializeField] private bool activateSeal;
+    public Seal Seal => seal;
 
     public void AddSeal()
     {
-        seal.Restore();
+        Seal.Restore();
     }
 
     public bool MonsterDiesToSeal(Monster monster)
     {
-        if (!seal.isActiveAndEnabled) return false;
-        seal.Use();
+        if (!Seal.Enabled) return false;
+        Seal.Use();
         return true;
     }
     

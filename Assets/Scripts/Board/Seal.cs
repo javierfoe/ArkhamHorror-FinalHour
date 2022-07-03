@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Seal : MonoBehaviour
@@ -6,12 +7,22 @@ public class Seal : MonoBehaviour
     [SerializeField] private UnityEngine.Color full, half;
     private SpriteRenderer _sprite;
     private int _uses;
+
+    public bool Enabled => _uses > 0;
+
+    public IEnumerator Disable()
+    {
+        _uses = 0;
+        gameObject.SetActive(false);
+        yield return null;
+    }
     
     public void Use()
     {
         _uses--;
+        RefreshSprite();
         if (_uses > 0) return;
-        gameObject.SetActive(false);
+        Disable();
     }
 
     public void Restore(int uses = MaxUses)
