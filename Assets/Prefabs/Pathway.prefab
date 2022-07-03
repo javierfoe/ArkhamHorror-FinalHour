@@ -27,12 +27,12 @@ Transform:
   m_GameObject: {fileID: 3103519117643460733}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5247591403826122128}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7807060715423863466
 SpriteRenderer:
@@ -102,7 +102,6 @@ MonoBehaviour:
   two: {fileID: 0}
   seal: {fileID: 1240139761469472252}
   activateSeal: 1
-  halfSeal: 0
 --- !u!1001 &4673213991878731869
 PrefabInstance:
   m_ObjectHideFlags: 0

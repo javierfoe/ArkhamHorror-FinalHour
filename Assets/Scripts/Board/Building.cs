@@ -215,11 +215,6 @@ public class Building : MonoBehaviour
         {
             _rooms[i].Building = this;
         }
-
-        for (var i = numberOfRooms; i < MaxRooms; i++)
-        {
-            _rooms[i].gameObject.SetActive(false);
-        }
     }
 
     private void Start()

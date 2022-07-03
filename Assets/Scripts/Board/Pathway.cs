@@ -23,6 +23,10 @@ public class Pathway : MonoBehaviour
     {
         one.AddAdjacent(two, this);
         two.AddAdjacent(one, this);
+    }
+
+    private void Start()
+    {
         if (!activateSeal) return;
         AddSeal();
     }
