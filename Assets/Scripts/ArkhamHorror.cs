@@ -166,18 +166,6 @@ public class ArkhamHorror : MonoBehaviour
     private IEnumerator StartLoop()
     {
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
-        _ancientOneOmen.AddOmenSymbols(3);
-        yield return _ancientOneOmen.ActivateOmenSymbols();
-        _ancientOneOmen.AddOmenSymbols(3);
-        yield return _ancientOneOmen.ActivateOmenSymbols();
-        _ancientOneOmen.AddOmenSymbols(6);
-        yield return _ancientOneOmen.ActivateOmenSymbols();
-        _ancientOneOmen.AddOmenSymbols(6);
-        yield return _ancientOneOmen.ActivateOmenSymbols();
-        _ancientOneOmen.AddOmenSymbols(6);
-        yield return _ancientOneOmen.ActivateOmenSymbols();
-        _ancientOneOmen.AddOmenSymbols(6);
-        yield return _ancientOneOmen.ActivateOmenSymbols();
 /*
         while (true)
         {
