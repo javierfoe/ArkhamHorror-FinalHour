@@ -1,11 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Events;
 using Debug = UnityEngine.Debug;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public class ArkhamHorror : MonoBehaviour
@@ -16,6 +13,7 @@ public class ArkhamHorror : MonoBehaviour
         public int tesseract, heptagram, trinity;
     }
 
+    [SerializeField] private OmenCardContainer hand, actions;
     [SerializeField] private GatePool gatePool;
     [SerializeField] private Transform buildings, investigators;
     [SerializeField] private Monster monsterPrefab;
@@ -25,6 +23,7 @@ public class ArkhamHorror : MonoBehaviour
 
     private readonly Dictionary<Gate, Building> _gateBuildings = new();
     private readonly Pool<MonsterDefinition> _monsterPool = new();
+    private readonly Pool<OmenCardDefinition> _omenCards = new();
     private readonly Pool<Gate> _gates = new();
     private Building _ritual;
     private Monster[] _monsters;
@@ -165,8 +164,18 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator StartLoop()
     {
+        while (true)
+        {
+            hand.SetOmenCards(_omenCards.GetRandom(5));
+            var waitFor = hand.WaitForCardSelection();
+            yield return waitFor;
+            _omenCards.Discard(waitFor.SelectedCard);
+            _omenCards.Discard(waitFor.DiscardedCards);
+            actions.SetOmenCards(waitFor.DiscardedCards);
+        }
+        /*
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
-/*
+
         while (true)
         {
             foreach (var building in _buildings)
@@ -225,8 +234,24 @@ public class ArkhamHorror : MonoBehaviour
         yield return AddGateAndSpawnMonster(building);
     }
 
+    private void Awake()
+    {
+        OmenSprites.Initialize();
+    }
+
     private void Start()
     {
+        OmenSymbols omenSymbols = Resources.Load("OmenSymbols") as OmenSymbols;
+
+        for (var i = 0; i < omenSymbols.cards.Length; i++)
+        {
+            var omenCard = new OmenCardDefinition();
+            omenCard.number = i;
+            omenCard.clue = (Clue)(i % 5);
+            omenCard.omens = omenSymbols.cards[i];
+            _omenCards.Add(omenCard);
+        }
+        
         List<MonsterDefinition> startingMonsterPool = new();
 
         foreach (var monsterDef in baseMonsters.monsterDefinitions)
@@ -273,88 +298,5 @@ public class ArkhamHorror : MonoBehaviour
         }
 
         StartCoroutine(StartLoop());
-    }
-}
-
-public class MonsterSpawn : IEnumerator
-{
-    private bool _firstFrame = true;
-    public Monster Monster { get; private set; }
-
-    public object Current { get; }
-
-    public MonsterSpawn(Monster prefab, MonsterDefinition monsterDefinition, UnityAction<Monster> onDestroy)
-    {
-        Monster = Object.Instantiate(prefab).Initialize(monsterDefinition, onDestroy);
-    }
-
-    public bool MoveNext()
-    {
-        if (!_firstFrame) return false;
-        _firstFrame = false;
-        return true;
-    }
-
-    public void Reset()
-    {
-    }
-}
-
-public class EldritchMinionsSpawn : IEnumerator
-{
-    public readonly Dictionary<EldritchMinion, List<Monster>> Monsters = new();
-    private readonly ArkhamHorror _arkhamHorror;
-    private readonly EldritchMinionDefinition[] _eldritchMinions;
-    private readonly Building[] _buildings;
-    private int _currentMonster, _currentMonsterAmount, _currentBuilding, _currentMonsterMax;
-
-    public object Current { get; private set; }
-
-    public EldritchMinionsSpawn(EldritchMinionDefinition[] eldritchMinions, Building[] buildings,
-        ArkhamHorror arkhamHorror)
-    {
-        _buildings = buildings;
-        _arkhamHorror = arkhamHorror;
-        _eldritchMinions = eldritchMinions;
-        _currentMonsterMax = eldritchMinions[0].monsterDefinition.amount;
-    }
-
-    public bool MoveNext()
-    {
-        if (_currentMonsterAmount == _currentMonsterMax)
-        {
-            _currentMonster++;
-            _currentMonsterAmount = 0;
-        }
-
-        if (_currentMonster == _eldritchMinions.Length)
-        {
-            _currentBuilding++;
-            _currentMonster = 0;
-        }
-
-        if (_currentBuilding == _buildings.Length)
-        {
-            return false;
-        }
-
-        _currentMonsterAmount++;
-        var eldritchMinionDefinition = _eldritchMinions[_currentMonster];
-        _currentMonsterMax = eldritchMinionDefinition.monsterDefinition.amount;
-        var eldritchMinion = eldritchMinionDefinition.eldritchMinion;
-        var monsterSpawn = _arkhamHorror.MonsterSpawn(eldritchMinionDefinition.monsterDefinition);
-        if (!Monsters.ContainsKey(eldritchMinionDefinition.eldritchMinion))
-        {
-            Monsters.Add(eldritchMinionDefinition.eldritchMinion, new List<Monster>());
-        }
-
-        Monsters[eldritchMinion].Add(monsterSpawn.Monster);
-        _buildings[_currentBuilding].IncomingMonster(monsterSpawn.Monster);
-        Current = monsterSpawn;
-        return true;
-    }
-
-    public void Reset()
-    {
     }
 }
