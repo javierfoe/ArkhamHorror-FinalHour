@@ -9,6 +9,8 @@ public class Building : MonoBehaviour
     private const int MaxRooms = 4;
     private static readonly List<Building> TraversedBuildings = new();
 
+    [SerializeField] private ClueSymbol clue;
+    [SerializeField] private Transform rooms, playerSpots;
     [SerializeField] private Gate gate;
     [SerializeField] private int numberOfRooms = 4;
     [SerializeField] private Building redArrow, blueArrow;
@@ -17,6 +19,16 @@ public class Building : MonoBehaviour
     private readonly List<Investigator> _investigators = new();
     private Room[] _rooms;
     private Location[] _investigatorLocations;
+
+    public Clue Clue
+    {
+        get => clue.Clue;
+        set
+        {
+            clue.gameObject.SetActive(true);
+            clue.Clue = value;
+        }
+    }
 
     public Gate Gate
     {
@@ -203,18 +215,18 @@ public class Building : MonoBehaviour
 
     private void Awake()
     {
-        _rooms = transform.GetChild(0).GetComponentsInChildren<Room>();
-        _investigatorLocations = transform.GetChild(1).GetComponentsInChildren<Location>();
+        _rooms = rooms.GetComponentsInChildren<Room>();
+        _investigatorLocations = playerSpots.GetComponentsInChildren<Location>();
         Gate = gate;
         foreach (var location in _investigatorLocations)
         {
             location.Building = this;
         }
-
         for (var i = 0; i < numberOfRooms; i++)
         {
             _rooms[i].Building = this;
         }
+        clue.gameObject.SetActive(false);
     }
 
     private void Start()

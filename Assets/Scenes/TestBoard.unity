@@ -773,9 +773,9 @@ MonoBehaviour:
   hand: {fileID: 1082189492}
   actions: {fileID: 1895837987}
   gatePool:
-    tesseract: 0
-    heptagram: 0
-    trinity: 0
+    tesseract: 3
+    heptagram: 3
+    trinity: 3
   buildings: {fileID: 1240850457}
   investigators: {fileID: 836005138}
   monsterPrefab: {fileID: 1029407920, guid: 545fcbcb83be5f949b4e30eca35d44f9, type: 3}

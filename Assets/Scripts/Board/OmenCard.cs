@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class OmenCard : MonoBehaviour
 {
     [SerializeField] private int number;
     [SerializeField] private GameObject omenSymbol1, omenSymbol2;
-    [SerializeField] private SpriteRenderer clueSymbol;
+    [SerializeField] private ClueSymbol clueSymbol;
     private Action _onClick;
 
     public OmenCardDefinition OmenCardDefinition { get; private set; }
@@ -26,11 +24,11 @@ public class OmenCard : MonoBehaviour
     {
         OmenCardDefinition = definition;
 
-        omenSymbol1.SetActive(definition.omens > 0);
-        omenSymbol2.SetActive(definition.omens > 1);
+        omenSymbol1.SetActive(definition.Omens > 0);
+        omenSymbol2.SetActive(definition.Omens > 1);
 
-        clueSymbol.sprite = OmenSprites.GetSprite(definition.clue);
-        number = definition.number;
+        clueSymbol.Clue = definition.Clue;
+        number = definition.Number;
     }
 
     private void OnMouseDown()
@@ -42,32 +40,8 @@ public class OmenCard : MonoBehaviour
     }
 }
 
-public static class OmenSprites
-{
-    private static readonly Dictionary<Clue, Sprite> Sprites = new();
-
-    public static Sprite GetSprite(Clue clue)
-    {
-        return clue == Clue.Key ? null : Sprites[clue];
-    }
-
-    public static void Initialize()
-    {
-        var star = Resources.Load<Sprite>("Icons/star");
-        Sprites.Add(Clue.Star, star);
-        var diamond = Resources.Load<Sprite>("Icons/diamond");
-        Sprites.Add(Clue.Diamond, diamond);
-        var clubs = Resources.Load<Sprite>("Icons/clubs");
-        Sprites.Add(Clue.Clubs, clubs);
-        var hourglass = Resources.Load<Sprite>("Icons/hourglass");
-        Sprites.Add(Clue.Hourglass, hourglass);
-        var moon = Resources.Load<Sprite>("Icons/moon");
-        Sprites.Add(Clue.Moon, moon);
-    }
-}
-
 public class OmenCardDefinition
 {
-    public int number, omens;
-    public Clue clue;
+    public int Number, Omens;
+    public Clue Clue;
 }

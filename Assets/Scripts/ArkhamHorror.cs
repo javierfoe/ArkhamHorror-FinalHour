@@ -25,6 +25,7 @@ public class ArkhamHorror : MonoBehaviour
     private readonly Pool<MonsterDefinition> _monsterPool = new();
     private readonly Pool<OmenCardDefinition> _omenCards = new();
     private readonly Pool<Gate> _gates = new();
+    private readonly Pool<Clue> _clues = new();
     private Building _ritual;
     private Monster[] _monsters;
     private Building[] _buildings;
@@ -236,7 +237,7 @@ public class ArkhamHorror : MonoBehaviour
 
     private void Awake()
     {
-        OmenSprites.Initialize();
+        ClueSprites.Initialize();
     }
 
     private void Start()
@@ -246,9 +247,9 @@ public class ArkhamHorror : MonoBehaviour
         for (var i = 0; i < omenSymbols.cards.Length; i++)
         {
             var omenCard = new OmenCardDefinition();
-            omenCard.number = i;
-            omenCard.clue = (Clue)(i % 5);
-            omenCard.omens = omenSymbols.cards[i];
+            omenCard.Number = i+1;
+            omenCard.Clue = (Clue)(i % 5);
+            omenCard.Omens = omenSymbols.cards[i];
             _omenCards.Add(omenCard);
         }
         
@@ -295,6 +296,26 @@ public class ArkhamHorror : MonoBehaviour
                     AddGate(building);
                     break;
             }
+        }
+        
+        for (var i = 0; i < 5; i++)
+        {
+            var clue = (Clue)(i % 5);
+            _clues.Add(clue);
+            _clues.Add(clue);
+        }
+
+        var ritualSymbols = _clues.GetRandom(2);
+
+        for (var i = 0; i < 3; i++)
+        {
+            _clues.Add(Clue.Key);
+        }
+
+        foreach (var building in _buildings)
+        {
+            if (building.Gate != Gate.None) continue;
+            building.Clue = _clues.GetRandom();
         }
 
         StartCoroutine(StartLoop());
