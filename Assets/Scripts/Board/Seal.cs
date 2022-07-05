@@ -10,11 +10,10 @@ public class Seal : MonoBehaviour
 
     public bool Enabled => _uses > 0;
 
-    public IEnumerator Disable()
+    public void Disable()
     {
         _uses = 0;
         gameObject.SetActive(false);
-        yield return null;
     }
     
     public void Use()

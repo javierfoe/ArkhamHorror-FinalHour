@@ -29,7 +29,7 @@ public class UmordhothOmen : AncientOneOmen
                 yield return ArkhamHorror.SpawnMonsters(2, building);
                 break;
             case > 2:
-                yield return ArkhamHorror.RemoveRandomSeal();
+                ArkhamHorror.RemoveRandomSeal();
                 break;
             case > 0:
                 break;
