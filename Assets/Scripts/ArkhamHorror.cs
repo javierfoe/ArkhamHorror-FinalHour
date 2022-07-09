@@ -77,7 +77,7 @@ public class ArkhamHorror : MonoBehaviour
         }
     }
 
-    public IEnumerator RemoveRandomSeal()
+    public void RemoveRandomSeal()
     {
         List<Seal> seals = new();
         foreach (var building in _buildings)
@@ -90,7 +90,7 @@ public class ArkhamHorror : MonoBehaviour
         }
 
         var random = Random.Range(0, seals.Count - 1);
-        yield return seals[random].Disable();
+        seals[random].Disable();
     }
 
     public IEnumerator DamageRitual(int amount)
@@ -165,16 +165,15 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator StartLoop()
     {
-        while (true)
-        {
-            hand.SetOmenCards(_omenCards.GetRandom(5));
-            var waitFor = hand.WaitForCardSelection();
-            yield return waitFor;
-            _omenCards.Discard(waitFor.SelectedCard);
-            _omenCards.Discard(waitFor.DiscardedCards);
-            actions.SetOmenCards(waitFor.DiscardedCards);
-        }
         /*
+                    hand.SetOmenCards(_omenCards.GetRandom(5));
+                    var waitFor = hand.WaitForCardSelection();
+                    yield return waitFor;
+                    _omenCards.Discard(waitFor.SelectedCard);
+                    _omenCards.Discard(waitFor.DiscardedCards);
+                    actions.SetOmenCards(waitFor.DiscardedCards);*/
+
+
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
 
         while (true)
@@ -192,7 +191,7 @@ public class ArkhamHorror : MonoBehaviour
             }
 
             yield return null;
-        }*/
+        }
     }
 
     private IEnumerator SpawnMonster(Building building)
@@ -247,12 +246,12 @@ public class ArkhamHorror : MonoBehaviour
         for (var i = 0; i < omenSymbols.cards.Length; i++)
         {
             var omenCard = new OmenCardDefinition();
-            omenCard.Number = i+1;
+            omenCard.Number = i + 1;
             omenCard.Clue = (Clue)(i % 5);
             omenCard.Omens = omenSymbols.cards[i];
             _omenCards.Add(omenCard);
         }
-        
+
         List<MonsterDefinition> startingMonsterPool = new();
 
         foreach (var monsterDef in baseMonsters.monsterDefinitions)
@@ -297,7 +296,7 @@ public class ArkhamHorror : MonoBehaviour
                     break;
             }
         }
-        
+
         for (var i = 0; i < 5; i++)
         {
             var clue = (Clue)(i % 5);
