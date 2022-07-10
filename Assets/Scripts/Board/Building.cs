@@ -9,6 +9,7 @@ public class Building : MonoBehaviour
     private const int MaxRooms = 4;
     private static readonly List<Building> TraversedBuildings = new();
 
+    [SerializeField] private Zone zone;
     [SerializeField] private ClueSymbol clue;
     [SerializeField] private Transform rooms, playerSpots;
     [SerializeField] private Gate gate;
@@ -19,6 +20,8 @@ public class Building : MonoBehaviour
     private readonly List<Investigator> _investigators = new();
     private Room[] _rooms;
     private Location[] _investigatorLocations;
+
+    public Zone Zone => zone;
 
     public Clue Clue
     {

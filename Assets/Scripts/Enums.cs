@@ -12,6 +12,13 @@ public enum Color
     Red
 }
 
+public enum Zone
+{
+    Green,
+    Orange,
+    Purple
+}
+
 public enum Gate
 {
     Heptagram = 0,

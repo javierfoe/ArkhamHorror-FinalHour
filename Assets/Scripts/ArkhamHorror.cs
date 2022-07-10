@@ -22,12 +22,13 @@ public class ArkhamHorror : MonoBehaviour
     [SerializeField] private AncientOne eldritchHorror;
 
     private readonly Dictionary<Gate, Building> _gateBuildings = new();
+    private readonly Dictionary<Zone, List<Building>> _zoneBuildings = new();
     private readonly Pool<MonsterDefinition> _monsterPool = new();
     private readonly Pool<OmenCardDefinition> _omenCards = new();
     private readonly Pool<Gate> _gates = new();
     private readonly Pool<Clue> _clues = new();
-    private Building _ritual;
-    private Monster[] _monsters;
+    private Ritual _ritual;
+    private Building _ritualBuilding;
     private Building[] _buildings;
     private Investigator[] _investigators;
     private AncientOneOmen _ancientOneOmen;
@@ -95,7 +96,7 @@ public class ArkhamHorror : MonoBehaviour
 
     public IEnumerator DamageRitual(int amount)
     {
-        yield return _ritual.Wreck(amount);
+        yield return _ritualBuilding.Wreck(amount);
     }
 
     public void IncomingMonsterLowestGate(Monster monster)
@@ -165,14 +166,18 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator StartLoop()
     {
-        /*
-                    hand.SetOmenCards(_omenCards.GetRandom(5));
-                    var waitFor = hand.WaitForCardSelection();
-                    yield return waitFor;
-                    _omenCards.Discard(waitFor.SelectedCard);
-                    _omenCards.Discard(waitFor.DiscardedCards);
-                    actions.SetOmenCards(waitFor.DiscardedCards);*/
-
+        while (true)
+        {
+            var list = _omenCards.GetRandom(5);
+            list.Sort((one, two) => one.Number.CompareTo(two.Number));
+            hand.SetOmenCards(list);
+            var waitFor = hand.WaitForCardSelection();
+            yield return waitFor;
+            _ritual.AddClue(waitFor.SelectedCard.Clue);
+            _omenCards.Discard(waitFor.DiscardedCards);
+            actions.SetOmenCards(waitFor.DiscardedCards);
+        }
+/*
 
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
 
@@ -191,7 +196,7 @@ public class ArkhamHorror : MonoBehaviour
             }
 
             yield return null;
-        }
+        }*/
     }
 
     private IEnumerator SpawnMonster(Building building)
@@ -213,8 +218,9 @@ public class ArkhamHorror : MonoBehaviour
         return building.AddGate();
     }
 
-    private IEnumerator AddGateAndSpawnMonster(Building building)
+    private IEnumerator AddGateAndSpawnMonster(Gate gate)
     {
+        var building = _gateBuildings[gate];
         var monstersToSpawn = AddGate(building);
         for (var i = 0; i < monstersToSpawn; i++)
         {
@@ -230,8 +236,7 @@ public class ArkhamHorror : MonoBehaviour
     private IEnumerator AddRandomGate()
     {
         var randomGate = _gates.GetRandom();
-        var building = _gateBuildings[randomGate];
-        yield return AddGateAndSpawnMonster(building);
+        yield return AddGateAndSpawnMonster(randomGate);
     }
 
     private void Awake()
@@ -274,13 +279,19 @@ public class ArkhamHorror : MonoBehaviour
         foreach (var building in _buildings)
         {
             building.FinishMonsterMovement();
-            Gate gate = building.Gate;
+            var zone = building.Zone;
+            if (!_zoneBuildings.ContainsKey(zone))
+            {
+                _zoneBuildings.Add(zone, new List<Building>());
+            }
+            _zoneBuildings[zone].Add(building);
+            var gate = building.Gate;
             switch (gate)
             {
                 case Gate.None:
                     break;
                 case Gate.Ritual:
-                    _ritual = building;
+                    _ritualBuilding = building;
                     break;
                 default:
                     if (_gateBuildings.ContainsKey(gate))
@@ -304,8 +315,11 @@ public class ArkhamHorror : MonoBehaviour
             _clues.Add(clue);
         }
 
-        var ritualSymbols = _clues.GetRandom(2);
+        var firstRitualSymbol = _clues.GetRandom();
+        var secondRitualSymbol = _clues.GetRandom();
 
+        _ritual = new Ritual(firstRitualSymbol, secondRitualSymbol);
+        
         for (var i = 0; i < 3; i++)
         {
             _clues.Add(Clue.Key);
