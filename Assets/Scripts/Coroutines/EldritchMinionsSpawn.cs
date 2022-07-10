@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class EldritchMinionsSpawn : IEnumerator
 {
@@ -11,13 +12,13 @@ public class EldritchMinionsSpawn : IEnumerator
 
     public object Current { get; private set; }
 
-    public EldritchMinionsSpawn(EldritchMinionDefinition[] eldritchMinions, Building[] buildings,
+    public EldritchMinionsSpawn(IEnumerable<EldritchMinionDefinition> eldritchMinions, IEnumerable<Building> buildings,
         ArkhamHorror arkhamHorror)
     {
-        _buildings = buildings;
+        _buildings = buildings.ToArray();
         _arkhamHorror = arkhamHorror;
-        _eldritchMinions = eldritchMinions;
-        _currentMonsterMax = eldritchMinions[0].monsterDefinition.amount;
+        _eldritchMinions = eldritchMinions.ToArray();
+        _currentMonsterMax = _eldritchMinions[0].monsterDefinition.amount;
     }
 
     public bool MoveNext()

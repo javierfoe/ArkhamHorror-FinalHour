@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 using Random = UnityEngine.Random;
 
 public class ArkhamHorror : MonoBehaviour
@@ -13,23 +12,19 @@ public class ArkhamHorror : MonoBehaviour
         public int tesseract, heptagram, trinity;
     }
 
+    [SerializeField] private University university;
     [SerializeField] private OmenCardContainer hand, actions;
     [SerializeField] private GatePool gatePool;
-    [SerializeField] private Transform buildings, investigators;
     [SerializeField] private Monster monsterPrefab;
     [SerializeField] private Monsters baseMonsters;
     [SerializeField] private Difficulty difficulty;
     [SerializeField] private AncientOne eldritchHorror;
 
-    private readonly Dictionary<Gate, Building> _gateBuildings = new();
-    private readonly Dictionary<Zone, List<Building>> _zoneBuildings = new();
     private readonly Pool<MonsterDefinition> _monsterPool = new();
     private readonly Pool<OmenCardDefinition> _omenCards = new();
     private readonly Pool<Gate> _gates = new();
     private readonly Pool<Clue> _clues = new();
     private Ritual _ritual;
-    private Building _ritualBuilding;
-    private Building[] _buildings;
     private Investigator[] _investigators;
     private AncientOneOmen _ancientOneOmen;
 
@@ -58,9 +53,9 @@ public class ArkhamHorror : MonoBehaviour
 
     public IEnumerator SpawnMonstersOtherBuildings(int amount)
     {
-        foreach (var building in _buildings)
+        var buildings = university.GetOtherBuildings();
+        foreach (var building in buildings)
         {
-            if (building.Gate != Gate.None) continue;
             for (var i = 0; i < amount; i++)
             {
                 yield return SpawnMonster(building);
@@ -70,61 +65,33 @@ public class ArkhamHorror : MonoBehaviour
 
     public IEnumerator SpawnMonstersGate(int amount, Gate gate)
     {
-        foreach (var building in _buildings)
+        var buildings = university.GetGateBuildings(gate);
+        foreach (var building in buildings)
         {
-            if (gate == Gate.None && building.Gate is Gate.None or Gate.Ritual
-                || gate != Gate.None && building.Gate != gate) continue;
             yield return SpawnMonsters(amount, building);
         }
     }
 
     public void RemoveRandomSeal()
     {
-        List<Seal> seals = new();
-        foreach (var building in _buildings)
-        {
-            foreach (var seal in building.GetActiveSeals())
-            {
-                if (seals.Contains(seal)) continue;
-                seals.Add(seal);
-            }
-        }
-
+        var seals = university.GetSeals();
         var random = Random.Range(0, seals.Count - 1);
         seals[random].Disable();
     }
 
     public IEnumerator DamageRitual(int amount)
     {
-        yield return _ritualBuilding.Wreck(amount);
+        yield return university.DamageRitual(amount);
     }
 
     public void IncomingMonsterLowestGate(Monster monster)
     {
-        var aux = 10;
-        Building lowestGatePower = null;
-        foreach (var building in _buildings)
-        {
-            if (building.Gate is Gate.None or Gate.Ritual) continue;
-            var gatePower = building.GatePower;
-            if (gatePower >= aux) continue;
-            lowestGatePower = building;
-            aux = gatePower;
-        }
-
-        if (lowestGatePower != null)
-        {
-            lowestGatePower.IncomingMonster(monster);
-        }
+        university.GetLowestGateBuilding().IncomingMonster(monster);
     }
 
     public void IncomingMonster(Monster monster, Gate gate)
     {
-        foreach (var building in _buildings)
-        {
-            if (gate != building.Gate) continue;
-            building.IncomingMonster(monster);
-        }
+        university.GetGateBuilding(gate).IncomingMonster(monster);
     }
 
     public IEnumerator SpawnMonsters(int amount, Building building)
@@ -138,17 +105,7 @@ public class ArkhamHorror : MonoBehaviour
     public EldritchMinionsSpawn SpawnEldritchMinionsGate(EldritchMinionDefinition[] eldritchMinionDefinitions,
         Gate gate)
     {
-        Building[] buildings = new Building[gate != Gate.None ? 1 : 3];
-
-        var i = 0;
-        foreach (var building in _buildings)
-        {
-            if (gate != Gate.None && building.Gate == gate ||
-                gate == Gate.None && building.Gate is not (Gate.None or Gate.Ritual))
-            {
-                buildings[i++] = building;
-            }
-        }
+        var buildings = university.GetGateBuildings(gate);
 
         EldritchMinionsSpawn eldritchMinionsSpawn =
             new EldritchMinionsSpawn(eldritchMinionDefinitions, buildings, this);
@@ -220,7 +177,7 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator AddGateAndSpawnMonster(Gate gate)
     {
-        var building = _gateBuildings[gate];
+        var building = university.GetGateBuilding(gate);
         var monstersToSpawn = AddGate(building);
         for (var i = 0; i < monstersToSpawn; i++)
         {
@@ -274,40 +231,6 @@ public class ArkhamHorror : MonoBehaviour
         AddGate(gatePool.heptagram - (oneLessGate == 1 ? 1 : 0), Gate.Heptagram);
         AddGate(gatePool.trinity - (oneLessGate == 2 ? 1 : 0), Gate.Trinity);
 
-        _buildings = buildings.GetComponentsInChildren<Building>();
-
-        foreach (var building in _buildings)
-        {
-            building.FinishMonsterMovement();
-            var zone = building.Zone;
-            if (!_zoneBuildings.ContainsKey(zone))
-            {
-                _zoneBuildings.Add(zone, new List<Building>());
-            }
-            _zoneBuildings[zone].Add(building);
-            var gate = building.Gate;
-            switch (gate)
-            {
-                case Gate.None:
-                    break;
-                case Gate.Ritual:
-                    _ritualBuilding = building;
-                    break;
-                default:
-                    if (_gateBuildings.ContainsKey(gate))
-                    {
-                        Debug.LogWarning(
-                            $"A building with gate {gate} already exists: {_gateBuildings[gate]}. Ignoring this building",
-                            gameObject);
-                        continue;
-                    }
-
-                    _gateBuildings.Add(gate, building);
-                    AddGate(building);
-                    break;
-            }
-        }
-
         for (var i = 0; i < 5; i++)
         {
             var clue = (Clue)(i % 5);
@@ -325,7 +248,8 @@ public class ArkhamHorror : MonoBehaviour
             _clues.Add(Clue.Key);
         }
 
-        foreach (var building in _buildings)
+        var buildings = university.GetOtherBuildings();
+        foreach (var building in buildings)
         {
             if (building.Gate != Gate.None) continue;
             building.Clue = _clues.GetRandom();

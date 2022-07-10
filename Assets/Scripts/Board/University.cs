@@ -6,11 +6,56 @@ public class University : MonoBehaviour
 {
     private readonly Dictionary<Gate, Building> _gateBuildings = new();
     private readonly Dictionary<Zone, List<Building>> _zoneBuildings = new();
-    private Ritual _ritual;
     private Building _ritualBuilding;
     private Building[] _buildings;
 
-    public void RemoveRandomSeal()
+    public Building GetGateBuilding(Gate gate)
+    {
+        return _gateBuildings[gate];
+    }
+
+    public Building GetLowestGateBuilding()
+    {
+        var aux = 10;
+        Building lowestGatePower = null;
+        foreach (var building in _buildings)
+        {
+            if (building.Gate is Gate.None or Gate.Ritual) continue;
+            var gatePower = building.GatePower;
+            if (gatePower >= aux) continue;
+            lowestGatePower = building;
+            aux = gatePower;
+        }
+
+        return lowestGatePower;
+    }
+
+    public List<Building> GetOtherBuildings()
+    {
+        var result = new List<Building>();
+        foreach (var building in _buildings)
+        {
+            if (building.Gate != Gate.None) continue;
+            result.Add(building);
+        }
+
+        return result;
+    }
+
+    public List<Building> GetGateBuildings(Gate gate)
+    {
+        var result = new List<Building>();
+        foreach (var building in _buildings)
+        {
+            if (gate == Gate.None && building.Gate is Gate.None or Gate.Ritual
+                || gate != Gate.None && building.Gate != gate) continue;
+            result.Add(building);
+        }
+
+        return result;
+    }
+
+    public List<Seal> GetSeals()
     {
         List<Seal> seals = new();
         foreach (var building in _buildings)
@@ -22,8 +67,7 @@ public class University : MonoBehaviour
             }
         }
 
-        var random = Random.Range(0, seals.Count - 1);
-        seals[random].Disable();
+        return seals;
     }
 
     public IEnumerator DamageRitual(int amount)
@@ -76,6 +120,7 @@ public class University : MonoBehaviour
             {
                 _zoneBuildings.Add(zone, new List<Building>());
             }
+
             _zoneBuildings[zone].Add(building);
             var gate = building.Gate;
             switch (gate)
