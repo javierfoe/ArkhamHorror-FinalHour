@@ -1,28 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class WaitForCardSelection : IEnumerator
+public class WaitForCardSelection : WaitFor
 {
-    private bool _selectionDone;
-    
-    public object Current { get; }
     public OmenCardDefinition SelectedCard { get; private set; }
-    public readonly List<OmenCardDefinition> DiscardedCards = new();
+    public readonly List<OmenCardDefinition> DiscardedCards;
 
-    public bool MoveNext()
+    public WaitForCardSelection(List<OmenCardDefinition> cards)
     {
-        return !_selectionDone;
+        DiscardedCards = cards;
     }
 
-    public void SelectionDone(OmenCardDefinition selected, List<OmenCardDefinition> rest)
+    public void SelectionDone(int index)
     {
-        SelectedCard = selected;
-        DiscardedCards.AddRange(rest);
-        _selectionDone = true;
+        SelectedCard = DiscardedCards[index];
+        DiscardedCards.RemoveAt(index);
+        ConfirmAction();
     }
 
-    public void Reset()
+    protected override IEnumerator Finished()
     {
+        yield return null;
     }
-
 }

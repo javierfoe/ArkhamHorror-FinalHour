@@ -108,7 +108,7 @@ public class University : MonoBehaviour
         return building.AddGate();
     }
 
-    private void Start()
+    private void Awake()
     {
         _buildings = GetComponentsInChildren<Building>();
 

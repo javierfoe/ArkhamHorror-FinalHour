@@ -6,7 +6,6 @@ using Debug = UnityEngine.Debug;
 
 public class Building : MonoBehaviour
 {
-    private const int MaxRooms = 4;
     private static readonly List<Building> TraversedBuildings = new();
 
     [SerializeField] private Zone zone;

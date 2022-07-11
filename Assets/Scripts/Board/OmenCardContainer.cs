@@ -6,9 +6,12 @@ using UnityEngine;
 public class OmenCardContainer : MonoBehaviour
 {
     private OmenCard[] _omenCards;
+    private List<OmenCardDefinition> _omenCardDefinitions;
 
     public void SetOmenCards(List<OmenCardDefinition> definitions)
     {
+        definitions.Sort((one, two) => one.Number.CompareTo(two.Number));
+        _omenCardDefinitions = definitions;
         var length = definitions.Count;
         if (length != _omenCards.Length) return;
         for (var i = 0; i < length; i++)
@@ -21,7 +24,7 @@ public class OmenCardContainer : MonoBehaviour
 
     public WaitForCardSelection WaitForCardSelection()
     {
-        var waitFor = new WaitForCardSelection();
+        var waitFor = new WaitForCardSelection(_omenCardDefinitions);
         for (var i = 0; i < _omenCards.Length; i++)
         {
             var omenCard = _omenCards[i];
@@ -31,12 +34,9 @@ public class OmenCardContainer : MonoBehaviour
         return waitFor;
     }
 
-    public void SelectedCard(WaitForCardSelection waitFor, int selection)
+    private void SelectedCard(WaitForCardSelection waitFor, int selection)
     {
-        var selected = _omenCards[selection].OmenCardDefinition;
-        var rest = _omenCards.Select(omen => omen.OmenCardDefinition).ToList();
-        rest.RemoveAt(selection);
-        waitFor.SelectionDone(selected, rest);
+        waitFor.SelectionDone(selection);
         foreach (var omenCard in _omenCards)
         {
             omenCard.ClearOnClick();

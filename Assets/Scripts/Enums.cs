@@ -51,3 +51,13 @@ public enum Clue
     Clubs,
     Key
 }
+
+public enum BadAction
+{
+    MonsterEachPortal,
+    TwoMonstersCurrent,
+    GreenZone,
+    OrangeZone,
+    PurpleZone,
+    Special
+}

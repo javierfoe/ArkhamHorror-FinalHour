@@ -12,6 +12,7 @@ public class ArkhamHorror : MonoBehaviour
         public int tesseract, heptagram, trinity;
     }
 
+    [SerializeField] private ActionCard actionCard;
     [SerializeField] private University university;
     [SerializeField] private OmenCardContainer hand, actions;
     [SerializeField] private GatePool gatePool;
@@ -113,6 +114,11 @@ public class ArkhamHorror : MonoBehaviour
         return eldritchMinionsSpawn;
     }
 
+    public void SetActionCard(ActionDefinition actionDefinition)
+    {
+        actionCard.SetActionCard(actionDefinition);
+    }
+
     private void AddGate(int amount, Gate gate)
     {
         for (var i = 0; i < amount; i++)
@@ -126,7 +132,6 @@ public class ArkhamHorror : MonoBehaviour
         while (true)
         {
             var list = _omenCards.GetRandom(5);
-            list.Sort((one, two) => one.Number.CompareTo(two.Number));
             hand.SetOmenCards(list);
             var waitFor = hand.WaitForCardSelection();
             yield return waitFor;

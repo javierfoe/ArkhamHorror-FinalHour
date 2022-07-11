@@ -27,7 +27,11 @@ public class Pathway : MonoBehaviour
 
     private void Start()
     {
-        if (!activateSeal) return;
+        if (!activateSeal)
+        {
+            seal.Disable();
+            return;
+        }
         AddSeal();
     }
 }
