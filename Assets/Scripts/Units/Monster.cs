@@ -1,10 +1,11 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Monster : DwellerGeneric<Room>
 {
+    public readonly UnityEvent<Monster> OnClick = new();
+
     [SerializeField] private UnityEngine.Color blue, red;
     [SerializeField] private Transform skillTokens;
 
@@ -24,6 +25,7 @@ public class Monster : DwellerGeneric<Room>
         }
     }
 
+    public Building Building => Location.Building;
     public Color Color => MonsterDefinition.color;
     public MonsterSkill MainMonsterSkill => _skills?.Length > 0 ? _skills[0] : MonsterSkill.None;
 
@@ -59,6 +61,7 @@ public class Monster : DwellerGeneric<Room>
                     Move();
                     break;
             }
+
             yield return null;
         }
     }
@@ -66,30 +69,30 @@ public class Monster : DwellerGeneric<Room>
     private void Wreck()
     {
         if (!Location) return;
-        Location.Building.Wreck(this);
+        Building.Wreck(this);
     }
 
     private void Move()
     {
         if (!Location) return;
-        Location.Building.MoveMonster(this);
+        Building.MoveMonster(this);
     }
 
     private void Kill()
     {
         if (!Location) return;
-        Location.Building.Kill();
+        Building.Kill();
     }
 
     protected override void Start()
     {
         base.Start();
-        
+
         if (_skills != null)
         {
             for (var i = 0; i < _skills.Length; i++)
             {
-                var skillToken = skillTokens.GetChild(i).GetComponent<global::Skill>();
+                var skillToken = skillTokens.GetChild(i).GetComponent<Skill>();
                 skillToken.gameObject.SetActive(true);
                 skillToken.ChangeSkill(_skills[i]);
             }
@@ -103,11 +106,13 @@ public class Monster : DwellerGeneric<Room>
         var sprite = GetComponentInChildren<SpriteRenderer>();
         if (sprite == null) return;
 
-        sprite.color = Color switch
-        {
-            Color.Blue => blue,
-            Color.Red => red,
-            _ => throw new ArgumentOutOfRangeException(nameof(Color))
-        };
+        sprite.color = Color == Color.Blue ? blue : red;
+    }
+
+    private void OnMouseDown()
+    {
+        OnClick.Invoke(this);
+        if (Location == null || Building == null) return;
+        Building.OnMouseDown();
     }
 }

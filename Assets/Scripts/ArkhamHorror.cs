@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class ArkhamHorror : MonoBehaviour
@@ -12,6 +13,7 @@ public class ArkhamHorror : MonoBehaviour
         public int tesseract, heptagram, trinity;
     }
 
+    [SerializeField] private Button confirm, undo;
     [SerializeField] private ActionCard actionCard;
     [SerializeField] private University university;
     [SerializeField] private OmenCardContainer hand, actions;
@@ -127,40 +129,6 @@ public class ArkhamHorror : MonoBehaviour
         }
     }
 
-    private IEnumerator StartLoop()
-    {
-        while (true)
-        {
-            var list = _omenCards.GetRandom(5);
-            hand.SetOmenCards(list);
-            var waitFor = hand.WaitForCardSelection();
-            yield return waitFor;
-            _ritual.AddClue(waitFor.SelectedCard.Clue);
-            _omenCards.Discard(waitFor.DiscardedCards);
-            actions.SetOmenCards(waitFor.DiscardedCards);
-        }
-/*
-
-        yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
-
-        while (true)
-        {
-            foreach (var building in _buildings)
-            {
-                yield return building.ActivateMonsters();
-            }
-
-            yield return AddRandomGate();
-
-            foreach (var building in _buildings)
-            {
-                building.FinishMonsterMovement();
-            }
-
-            yield return null;
-        }*/
-    }
-
     private IEnumerator SpawnMonster(Building building)
     {
         var monsterDefinition = _monsterPool.GetRandom();
@@ -247,7 +215,7 @@ public class ArkhamHorror : MonoBehaviour
         var secondRitualSymbol = _clues.GetRandom();
 
         _ritual = new Ritual(firstRitualSymbol, secondRitualSymbol);
-        
+
         for (var i = 0; i < 3; i++)
         {
             _clues.Add(Clue.Key);
@@ -261,5 +229,19 @@ public class ArkhamHorror : MonoBehaviour
         }
 
         StartCoroutine(StartLoop());
+    }
+
+    private IEnumerator StartLoop()
+    {
+        yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
+        
+        university.FinishMonsterMovement();
+        while (true)
+        {
+            var damageMonsters = new WaitForDamageMonsters(6, university.GetOtherBuildings());
+            confirm.onClick.AddListener(damageMonsters.ConfirmAction);
+            yield return damageMonsters;
+            confirm.onClick.RemoveListener(damageMonsters.ConfirmAction);
+        }
     }
 }

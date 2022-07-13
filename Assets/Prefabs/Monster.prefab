@@ -46,6 +46,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -9095717837082945937, guid: bd3cb4af8406d4436a2ae8c2aafe1f8d, type: 3}
+    - target: {fileID: 5302461792953270922, guid: a1ecd51a98b382541a696a1d25a85809, type: 3}
+      propertyPath: m_Size.y
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6836829659303881725, guid: a1ecd51a98b382541a696a1d25a85809, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.8
@@ -163,7 +167,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitPoints: {fileID: 7717515973340574079}
-  initializeDefault: 0
   blue: {r: 0.25792095, g: 0.34921968, b: 0.8679245, a: 1}
   red: {r: 0.9150943, g: 0.10791205, b: 0.10791205, a: 1}
   skillTokens: {fileID: 1186906241}

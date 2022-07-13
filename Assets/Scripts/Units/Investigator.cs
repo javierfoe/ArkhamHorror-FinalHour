@@ -1,11 +1,23 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Investigator : DwellerGeneric<Location>
 {
     private readonly Pool<Action> _actions = new();
     private readonly Dictionary<int, ActionText> _actionDefinitions = new();
+    
+    private int _currentHp;
+    public void Hit(int damage)
+    {
+        for (var i = 0; i < damage; i++) Hit();
+    }
+
+    private void Hit()
+    {
+        _currentHp--;
+        if (_currentHp == 0) return;
+        hitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
+    }
 
     private void Awake()
     {
@@ -24,6 +36,12 @@ public class Investigator : DwellerGeneric<Location>
         _actionDefinitions.Add(2, new ActionText("APARCAO!", "Repara tu ubicación una vez."));
         _actionDefinitions.Add(3, new ActionText("Capitán salami!", "Sella un camino conectado a tu ubicación."));
         _actionDefinitions.Add(4, new ActionText("Merengue merengue", "Recupera una vida."));
+    }
+
+    protected override void Start()
+    {
+        _currentHp = MaxHp;
+        base.Start();
     }
 
     protected override void Fill(Location location)

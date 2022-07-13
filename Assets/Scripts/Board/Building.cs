@@ -183,11 +183,16 @@ public class Building : MonoBehaviour
     {
         foreach (var monster in _incomingMonsters)
         {
-            if (monster.Location && monster.Location.Building != this) continue;
+            if (monster.Location && monster.Building!= this) continue;
             _monsters[monster.MainMonsterSkill].Add(monster);
         }
 
         _incomingMonsters.Clear();
+    }
+
+    public void OnMouseDown()
+    {
+        OnClick.Invoke(this);
     }
 
     private void MoveMonsterToNextBuilding(Monster monster)
@@ -244,10 +249,5 @@ public class Building : MonoBehaviour
         var offset = new Vector3(0.25f, 0.25f, 0);
         Debug.DrawLine(transform.position + offset, redArrow.transform.position, UnityEngine.Color.red, 100);
         Debug.DrawLine(transform.position - offset, blueArrow.transform.position, UnityEngine.Color.blue, 100);
-    }
-
-    private void OnMouseDown()
-    {
-        OnClick.Invoke(this);
     }
 }

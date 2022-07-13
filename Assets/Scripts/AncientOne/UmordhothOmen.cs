@@ -25,7 +25,7 @@ public class UmordhothOmen : AncientOneOmen
         {
             case > 5:
                 var random = Random.Range(0, _ghouls.Count - 1);
-                var building = _ghouls[random].Location.Building;
+                var building = _ghouls[random].Building;
                 yield return ArkhamHorror.SpawnMonsters(2, building);
                 break;
             case > 2:

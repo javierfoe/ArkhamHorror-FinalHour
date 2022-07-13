@@ -103,6 +103,14 @@ public class University : MonoBehaviour
         }
     }
 
+    public void FinishMonsterMovement()
+    {
+        foreach (var building in _buildings)
+        {
+            building.FinishMonsterMovement();
+        }
+    }
+
     private int AddGate(Building building)
     {
         return building.AddGate();
@@ -114,7 +122,6 @@ public class University : MonoBehaviour
 
         foreach (var building in _buildings)
         {
-            building.FinishMonsterMovement();
             var zone = building.Zone;
             if (!_zoneBuildings.ContainsKey(zone))
             {

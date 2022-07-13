@@ -17,7 +17,7 @@ public class Location : MonoBehaviour
             return;
         }
         dweller.transform.SetParent(transform);
-        dweller.transform.localPosition = Vector3.zero;
+        dweller.transform.localPosition = Vector3.back;
         _empty = false;
     }
 }
