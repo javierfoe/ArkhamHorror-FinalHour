@@ -4,18 +4,29 @@ using System.Collections.Generic;
 public class WaitForCardSelection : WaitFor
 {
     public OmenCardDefinition SelectedCard { get; private set; }
-    public readonly List<OmenCardDefinition> DiscardedCards;
+    public readonly List<OmenCardDefinition> DiscardedCards = new();
 
-    public WaitForCardSelection(List<OmenCardDefinition> cards)
+    private readonly IEnumerable<OmenCard> _omenCards;
+
+    public WaitForCardSelection(IEnumerable<OmenCard> cards)
     {
-        DiscardedCards = cards;
+        _omenCards = cards;
+        foreach (var omenCard in _omenCards)
+        {
+            omenCard.OnClick.AddListener(SelectCard);
+            DiscardedCards.Add(omenCard.OmenCardDefinition);
+        }
     }
 
-    public void SelectionDone(int index)
+    private void SelectCard(int index)
     {
         SelectedCard = DiscardedCards[index];
         DiscardedCards.RemoveAt(index);
         ConfirmAction();
+        foreach (var omenCard in _omenCards)
+        {
+            omenCard.OnClick.RemoveListener(SelectCard);
+        }
     }
 
     protected override IEnumerator Finished()

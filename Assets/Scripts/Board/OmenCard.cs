@@ -1,24 +1,15 @@
-using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class OmenCard : MonoBehaviour
 {
+    public readonly UnityEvent<int> OnClick = new ();
+    
     [SerializeField] private int number;
     [SerializeField] private GameObject omenSymbol1, omenSymbol2;
     [SerializeField] private ClueSymbol clueSymbol;
-    private Action _onClick;
 
     public OmenCardDefinition OmenCardDefinition { get; private set; }
-
-    public void SetOnClick(Action action)
-    {
-        _onClick = action;
-    }
-
-    public void ClearOnClick()
-    {
-        _onClick = null;
-    }
 
     public void SetOmenCard(OmenCardDefinition definition)
     {
@@ -33,10 +24,7 @@ public class OmenCard : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (_onClick != null)
-        {
-            _onClick();
-        }
+        OnClick.Invoke(transform.GetSiblingIndex());
     }
 }
 

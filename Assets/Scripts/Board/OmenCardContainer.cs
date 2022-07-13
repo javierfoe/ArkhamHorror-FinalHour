@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class OmenCardContainer : MonoBehaviour
@@ -24,23 +22,7 @@ public class OmenCardContainer : MonoBehaviour
 
     public WaitForCardSelection WaitForCardSelection()
     {
-        var waitFor = new WaitForCardSelection(_omenCardDefinitions);
-        for (var i = 0; i < _omenCards.Length; i++)
-        {
-            var omenCard = _omenCards[i];
-            var number = i;
-            omenCard.SetOnClick(() => SelectedCard(waitFor, number));
-        }
-        return waitFor;
-    }
-
-    private void SelectedCard(WaitForCardSelection waitFor, int selection)
-    {
-        waitFor.SelectionDone(selection);
-        foreach (var omenCard in _omenCards)
-        {
-            omenCard.ClearOnClick();
-        }
+        return new WaitForCardSelection(_omenCards);
     }
 
     private void Awake()
