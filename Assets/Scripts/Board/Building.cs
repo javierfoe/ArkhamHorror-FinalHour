@@ -8,8 +8,8 @@ using Debug = UnityEngine.Debug;
 public class Building : MonoBehaviour
 {
     private static readonly List<Building> TraversedBuildings = new();
-    
-    public readonly UnityEvent<Building> OnClick = new ();
+
+    public readonly UnityEvent<Building> OnClick = new();
 
     [SerializeField] private Zone zone;
     [SerializeField] private ClueSymbol clue;
@@ -18,7 +18,8 @@ public class Building : MonoBehaviour
     [SerializeField] private int numberOfRooms = 4;
     [SerializeField] private Building redArrow, blueArrow;
     private readonly Dictionary<Building, Pathway> _pathways = new();
-    private readonly List<Monster> _incomingMonsters = new(), _killers = new(), _stalkers = new(), _wreckers = new();
+    private readonly Dictionary<MonsterSkill, List<Monster>> _monsters = new();
+    private readonly List<Monster> _incomingMonsters = new();
     private readonly List<Investigator> _investigators = new();
     private Room[] _rooms;
     private Location[] _investigatorLocations;
@@ -41,15 +42,22 @@ public class Building : MonoBehaviour
         private set => gate = value;
     }
 
-    public int GatePower
-    {
-        get;
-        private set;
-    }
+    public int GatePower { get; private set; }
 
     public int AddGate()
     {
         return ++GatePower;
+    }
+
+    public List<Monster> GetMonsters()
+    {
+        var result = new List<Monster>();
+        foreach (var monsters in _monsters.Values)
+        {
+            result.AddRange(monsters);
+        }
+
+        return result;
     }
 
     public List<Seal> GetActiveSeals()
@@ -61,12 +69,13 @@ public class Building : MonoBehaviour
             if (!seal.Enabled) continue;
             result.Add(seal);
         }
+
         return result;
     }
 
     public IEnumerator Wreck(int amount)
     {
-        for(int i = 0, damage = 0; i < _rooms.Length && damage < amount; i++)
+        for (int i = 0, damage = 0; i < _rooms.Length && damage < amount; i++)
         {
             var room = _rooms[i];
             if (!room.IsFree) continue;
@@ -102,9 +111,9 @@ public class Building : MonoBehaviour
 
     public IEnumerator ActivateMonsters()
     {
-        yield return ActivateMonsters(_killers);
-        yield return ActivateMonsters(_stalkers);
-        yield return ActivateMonsters(_wreckers);
+        yield return ActivateMonsters(_monsters[MonsterSkill.Killer]);
+        yield return ActivateMonsters(_monsters[MonsterSkill.Stalker]);
+        yield return ActivateMonsters(_monsters[MonsterSkill.Wrecker]);
     }
 
     private IEnumerator ActivateMonsters(List<Monster> monsters)
@@ -175,18 +184,7 @@ public class Building : MonoBehaviour
         foreach (var monster in _incomingMonsters)
         {
             if (monster.Location && monster.Location.Building != this) continue;
-            switch (monster.MainMonsterSkill)
-            {
-                case MonsterSkill.Killer:
-                    _killers.Add(monster);
-                    break;
-                case MonsterSkill.Wrecker:
-                    _wreckers.Add(monster);
-                    break;
-                case MonsterSkill.Stalker:
-                    _stalkers.Add(monster);
-                    break;
-            }
+            _monsters[monster.MainMonsterSkill].Add(monster);
         }
 
         _incomingMonsters.Clear();
@@ -227,11 +225,18 @@ public class Building : MonoBehaviour
         {
             location.Building = this;
         }
+
         for (var i = 0; i < numberOfRooms; i++)
         {
             _rooms[i].Building = this;
         }
+
         clue.gameObject.SetActive(false);
+
+        _monsters.Add(MonsterSkill.None, new List<Monster>());
+        _monsters.Add(MonsterSkill.Killer, new List<Monster>());
+        _monsters.Add(MonsterSkill.Wrecker, new List<Monster>());
+        _monsters.Add(MonsterSkill.Stalker, new List<Monster>());
     }
 
     private void Start()
