@@ -8,9 +8,4 @@ public class WaitForMovement : WaitForAction
     public WaitForMovement(Investigator investigator, ArkhamHorror arkhamHorror) : base(investigator, arkhamHorror)
     {
     }
-
-    protected override IEnumerator Finished()
-    {
-        yield return null;
-    }
 }

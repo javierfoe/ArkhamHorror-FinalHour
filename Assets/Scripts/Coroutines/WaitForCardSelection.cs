@@ -18,19 +18,19 @@ public class WaitForCardSelection : WaitFor
         }
     }
 
+    public override void ConfirmAction()
+    {
+        base.ConfirmAction();
+        foreach (var omenCard in _omenCards)
+        {
+            omenCard.OnClick.RemoveListener(SelectCard);
+        }
+    }
+
     private void SelectCard(int index)
     {
         SelectedCard = DiscardedCards[index];
         DiscardedCards.RemoveAt(index);
         ConfirmAction();
-    }
-
-    protected override IEnumerator Finished()
-    {
-        foreach (var omenCard in _omenCards)
-        {
-            omenCard.OnClick.RemoveListener(SelectCard);
-        }
-        yield return null;
     }
 }
