@@ -131,6 +131,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 6
@@ -1136,6 +1140,14 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 8
@@ -1331,6 +1343,14 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 12
@@ -1475,6 +1495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f43be08af9e76e42b21e992950dc984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionCard: {fileID: 0}
   university: {fileID: 1240850458}
   hand: {fileID: 1082189492}
   actions: {fileID: 1895837987}
@@ -1581,6 +1602,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 1
@@ -2813,6 +2838,14 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 15
@@ -4055,6 +4088,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 10
@@ -4301,6 +4338,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 13
@@ -4420,6 +4461,14 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 1240850457}
     m_Modifications:
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 722567191061929615, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_Size.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 9

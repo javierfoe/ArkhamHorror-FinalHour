@@ -2,11 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Debug = UnityEngine.Debug;
 
 public class Building : MonoBehaviour
 {
     private static readonly List<Building> TraversedBuildings = new();
+    
+    public readonly UnityEvent<Building> OnClick = new ();
 
     [SerializeField] private Zone zone;
     [SerializeField] private ClueSymbol clue;
@@ -236,5 +239,10 @@ public class Building : MonoBehaviour
         var offset = new Vector3(0.25f, 0.25f, 0);
         Debug.DrawLine(transform.position + offset, redArrow.transform.position, UnityEngine.Color.red, 100);
         Debug.DrawLine(transform.position - offset, blueArrow.transform.position, UnityEngine.Color.blue, 100);
+    }
+
+    private void OnMouseDown()
+    {
+        OnClick.Invoke(this);
     }
 }
