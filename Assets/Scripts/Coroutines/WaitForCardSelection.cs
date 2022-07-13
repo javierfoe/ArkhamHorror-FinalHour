@@ -23,14 +23,14 @@ public class WaitForCardSelection : WaitFor
         SelectedCard = DiscardedCards[index];
         DiscardedCards.RemoveAt(index);
         ConfirmAction();
-        foreach (var omenCard in _omenCards)
-        {
-            omenCard.OnClick.RemoveListener(SelectCard);
-        }
     }
 
     protected override IEnumerator Finished()
     {
+        foreach (var omenCard in _omenCards)
+        {
+            omenCard.OnClick.RemoveListener(SelectCard);
+        }
         yield return null;
     }
 }
