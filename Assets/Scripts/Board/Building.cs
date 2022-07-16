@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using Debug = UnityEngine.Debug;
@@ -47,6 +48,32 @@ public class Building : MonoBehaviour
     public int AddGate()
     {
         return ++GatePower;
+    }
+
+    public Pathway GetPathwayTo(Building building)
+    {
+        return !_pathways.ContainsKey(building) ? null : _pathways[building];
+    }
+
+    public List<Building> GetAdjacentBuildings(bool includeSelf = false, bool withoutPathway = false)
+    {
+        var result = _pathways.Keys.ToList();
+        if (withoutPathway)
+        {
+            if (result.Contains(redArrow))
+            {
+                result.Add(redArrow);
+            }
+            if (!result.Contains(blueArrow))
+            {
+                result.Add(blueArrow);
+            }
+        }
+        if (includeSelf)
+        {
+            result.Add(this);
+        }
+        return result;
     }
 
     public List<Monster> GetMonsters()
@@ -116,16 +143,6 @@ public class Building : MonoBehaviour
         yield return ActivateMonsters(_monsters[MonsterSkill.Wrecker]);
     }
 
-    private IEnumerator ActivateMonsters(List<Monster> monsters)
-    {
-        foreach (var monster in monsters)
-        {
-            yield return monster.Activate();
-        }
-
-        monsters.Clear();
-    }
-
     public void MoveInvestigator(Investigator investigator)
     {
         foreach (var location in _investigatorLocations)
@@ -193,6 +210,16 @@ public class Building : MonoBehaviour
     public void OnMouseDown()
     {
         OnClick.Invoke(this);
+    }
+
+    private IEnumerator ActivateMonsters(List<Monster> monsters)
+    {
+        foreach (var monster in monsters)
+        {
+            yield return monster.Activate();
+        }
+
+        monsters.Clear();
     }
 
     private void MoveMonsterToNextBuilding(Monster monster)

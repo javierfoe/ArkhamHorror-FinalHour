@@ -11,12 +11,12 @@ public abstract class WaitFor : IEnumerator
         confirmed = true;
     }
 
-    public bool MoveNext()
+    public virtual bool MoveNext()
     {
         return !confirmed;
     }
 
-    public void Reset()
+    public virtual void Reset()
     {
     }
 }
