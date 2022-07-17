@@ -1,10 +1,7 @@
 using UnityEngine;
-using UnityEngine.Events;
 
-public class OmenCard : MonoBehaviour
+public class OmenCard : Clickable<int>
 {
-    public readonly UnityEvent<int> OnClick = new ();
-    
     [SerializeField] private int number;
     [SerializeField] private GameObject omenSymbol1, omenSymbol2;
     [SerializeField] private ClueSymbol clueSymbol;
@@ -22,9 +19,9 @@ public class OmenCard : MonoBehaviour
         number = definition.Number;
     }
 
-    private void OnMouseDown()
+    protected override int InvokeArgument()
     {
-        OnClick.Invoke(transform.GetSiblingIndex());
+        return transform.GetSiblingIndex();
     }
 }
 

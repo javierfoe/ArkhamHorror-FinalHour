@@ -1,36 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 
-public class WaitForCardSelection : WaitFor
+public class WaitForCardSelection : WaitForSelection<OmenCard, int, OmenCardDefinition>
 {
-    public OmenCardDefinition SelectedCard { get; private set; }
     public readonly List<OmenCardDefinition> DiscardedCards = new();
 
-    private readonly IEnumerable<OmenCard> _omenCards;
-
-    public WaitForCardSelection(IEnumerable<OmenCard> cards)
+    public WaitForCardSelection(IEnumerable<OmenCard> cards) : base(cards)
     {
-        _omenCards = cards;
-        foreach (var omenCard in _omenCards)
+        foreach (var omenCard in cards)
         {
-            omenCard.OnClick.AddListener(SelectCard);
             DiscardedCards.Add(omenCard.OmenCardDefinition);
         }
     }
 
-    public override void ConfirmAction()
+    protected override OmenCardDefinition Cast(int element)
     {
-        base.ConfirmAction();
-        foreach (var omenCard in _omenCards)
-        {
-            omenCard.OnClick.RemoveListener(SelectCard);
-        }
-    }
-
-    private void SelectCard(int index)
-    {
-        SelectedCard = DiscardedCards[index];
-        DiscardedCards.RemoveAt(index);
-        ConfirmAction();
+        var result = DiscardedCards[element];
+        DiscardedCards.RemoveAt(element);
+        return result;
     }
 }

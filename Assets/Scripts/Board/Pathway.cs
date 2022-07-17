@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Pathway : MonoBehaviour
+public class Pathway : Clickable<Pathway>
 {
     [SerializeField] private Building one, two;
     [SerializeField] private Seal seal;
@@ -33,5 +33,10 @@ public class Pathway : MonoBehaviour
             return;
         }
         AddSeal();
+    }
+
+    protected override Pathway InvokeArgument()
+    {
+        return this;
     }
 }

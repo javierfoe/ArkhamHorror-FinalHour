@@ -38,12 +38,12 @@ public class WaitForMovementBuilding : WaitFor
                     buildings.Add(_firstBuilding);
                 }
 
-                Current = new WaitForMovement(buildings);
+                Current = new WaitForSelection<Building>(buildings);
                 break;
             }
-            case WaitForMovement movement:
+            case WaitForSelection<Building> movement:
             {
-                var building = movement.TargetBuilding;
+                var building = movement.SelectedElement;
 
                 if (FirstBuildingClick && building == CurrentBuilding && building == _firstBuilding && !(_allSteps && _currentSteps < _maxSteps))
                 {
