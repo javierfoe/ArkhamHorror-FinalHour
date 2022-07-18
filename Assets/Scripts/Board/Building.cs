@@ -79,6 +79,11 @@ public class Building : MonoBehaviour, IClickable<Building>
         return result;
     }
 
+    public List<Investigator> GetInvestigators()
+    {
+        return new List<Investigator>(_investigators);
+    }
+
     public List<Monster> GetMonsters()
     {
         var result = new List<Monster>();
