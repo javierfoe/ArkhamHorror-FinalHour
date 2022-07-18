@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using Debug = UnityEngine.Debug;
 
-public class Building : Clickable<Building>
+public class Building : MonoBehaviour, IClickable<Building>
 {
     private static readonly List<Building> TraversedBuildings = new();
 
@@ -21,6 +22,8 @@ public class Building : Clickable<Building>
     private readonly List<Investigator> _investigators = new();
     private Room[] _rooms;
     private Location[] _investigatorLocations;
+
+    public UnityEvent<Building> OnClick { get; } = new();
 
     public Zone Zone => zone;
 
@@ -61,15 +64,18 @@ public class Building : Clickable<Building>
             {
                 result.Add(redArrow);
             }
+
             if (!result.Contains(blueArrow))
             {
                 result.Add(blueArrow);
             }
         }
+
         if (includeSelf)
         {
             result.Add(this);
         }
+
         return result;
     }
 
@@ -197,7 +203,7 @@ public class Building : Clickable<Building>
     {
         foreach (var monster in _incomingMonsters)
         {
-            if (monster.Location && monster.Building!= this) continue;
+            if (monster.Location && monster.Building != this) continue;
             _monsters[monster.MainMonsterSkill].Add(monster);
         }
 
@@ -270,8 +276,8 @@ public class Building : Clickable<Building>
         Debug.DrawLine(transform.position - offset, blueArrow.transform.position, UnityEngine.Color.blue, 100);
     }
 
-    protected override Building InvokeArgument()
+    public void OnMouseDown()
     {
-        return this;
+        OnClick.Invoke(this);
     }
 }

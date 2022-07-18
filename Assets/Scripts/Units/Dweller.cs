@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class Dweller : Clickable<Dweller>
+public abstract class Dweller : MonoBehaviour
 {
     [SerializeField] protected Transform hitPoints;
     public int MaxHp { get; protected set; }
@@ -21,11 +21,6 @@ public abstract class Dweller : Clickable<Dweller>
         {
             hitPoints.GetChild(i).gameObject.SetActive(true);
         }
-    }
-
-    protected override Dweller InvokeArgument()
-    {
-        return this;
     }
 }
 

@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.Events;
 
-public class Pathway : Clickable<Pathway>
+public class Pathway : MonoBehaviour, IClickable<Pathway>
 {
     [SerializeField] private Building one, two;
     [SerializeField] private Seal seal;
     [SerializeField] private bool activateSeal;
+
+    public UnityEvent<Pathway> OnClick { get; } = new();
     public Seal Seal => seal;
 
     public void AddSeal()
@@ -18,7 +21,12 @@ public class Pathway : Clickable<Pathway>
         Seal.Use();
         return true;
     }
-    
+
+    public void OnMouseDown()
+    {
+        OnClick.Invoke(this);
+    }
+
     private void Awake()
     {
         one.AddAdjacent(two, this);
@@ -32,11 +40,7 @@ public class Pathway : Clickable<Pathway>
             seal.Disable();
             return;
         }
-        AddSeal();
-    }
 
-    protected override Pathway InvokeArgument()
-    {
-        return this;
+        AddSeal();
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Location : Clickable<Location>
+public class Location : MonoBehaviour
 {
     private bool _empty = true;
     public Building Building
@@ -19,10 +19,5 @@ public class Location : Clickable<Location>
         dweller.transform.SetParent(transform);
         dweller.transform.localPosition = Vector3.back;
         _empty = false;
-    }
-
-    protected override Location InvokeArgument()
-    {
-        return this;
     }
 }

@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
-public class Investigator : DwellerGeneric<Location>
+public class Investigator : DwellerGeneric<Location>, IClickable<Investigator>
 {
     private readonly Pool<Action> _actions = new();
     private readonly Dictionary<int, ActionText> _actionDefinitions = new();
-    
+
     private int _currentHp;
+
+    public UnityEvent<Investigator> OnClick { get; } = new();
+
     public void Hit(int damage)
     {
         for (var i = 0; i < damage; i++) Hit();
@@ -80,6 +84,11 @@ public class Investigator : DwellerGeneric<Location>
             this.goodAction = goodAction;
         }
     }
+
+    public void OnMouseDown()
+    {
+        OnClick.Invoke(this);
+    }
 }
 
 [Serializable]
@@ -87,7 +96,7 @@ public class ActionDefinition
 {
     public readonly string title, goodAction, badAction;
     public readonly BadAction badActionEnum;
-    
+
     public ActionDefinition(string title, string goodAction, BadAction badAction, string badActionString = null)
     {
         this.title = title;

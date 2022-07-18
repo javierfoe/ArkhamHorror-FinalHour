@@ -2,9 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Monster : DwellerGeneric<Room>
+public class Monster : DwellerGeneric<Room>, IClickable<Monster>
 {
-    public readonly UnityEvent<Monster> OnClick = new();
 
     [SerializeField] private UnityEngine.Color blue, red;
     [SerializeField] private Transform skillTokens;
@@ -13,6 +12,8 @@ public class Monster : DwellerGeneric<Room>
     private MonsterDefinition _monsterDefinition;
     private UnityAction<Monster> _onDestroy;
     private bool _dead;
+    
+    public UnityEvent<Monster> OnClick { get; } = new();
 
     public MonsterDefinition MonsterDefinition
     {
@@ -109,7 +110,7 @@ public class Monster : DwellerGeneric<Room>
         sprite.color = Color == Color.Blue ? blue : red;
     }
 
-    private void OnMouseDown()
+    public void OnMouseDown()
     {
         OnClick.Invoke(this);
         if (Location == null || Building == null) return;
