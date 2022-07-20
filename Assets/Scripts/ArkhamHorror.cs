@@ -238,22 +238,11 @@ public class ArkhamHorror : MonoBehaviour
         university.FinishMonsterMovement();
         while (true)
         {
-            var waitFor = new WaitForMovementPathway(4, university.GetGateBuilding(Gate.Heptagram));
+            var waitFor = new WaitForMoveUpTo(university.GetGateBuilding(Gate.Heptagram), 2);
             
             yield return waitFor;
-            /*
-            Debug.Log(waitFor.Pathways.Count);
-            
-            foreach (var pathway in waitFor.Pathways)
-            {
-                Debug.Log($"Pathway {pathway.gameObject}", pathway.gameObject);
-            }*/
 
-            Debug.Log(waitFor.Buildings.Count);
-            foreach (var building in waitFor.Buildings)
-            {
-                Debug.Log($"Building {building.gameObject}", building.gameObject);
-            }
+            Debug.Log(waitFor.SelectedElement, waitFor.SelectedElement.gameObject);
         }
     }
 }
