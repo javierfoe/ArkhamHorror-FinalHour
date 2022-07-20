@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
-
 public class WaitForMoveUpTo : WaitForSelection<Building>
 {
     public WaitForMoveUpTo(Building origin, int distance) : base(GetDistanceBuildings(origin, distance))

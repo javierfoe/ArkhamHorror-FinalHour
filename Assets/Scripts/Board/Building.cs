@@ -55,6 +55,11 @@ public class Building : MonoBehaviour, IClickable<Building>
         return !_pathways.ContainsKey(building) ? null : _pathways[building];
     }
 
+    public IEnumerable<Pathway> GetPathways()
+    {
+        return _pathways.Values;
+    }
+
     public List<Building> GetAdjacentBuildings(bool includeSelf = false, bool withoutPathway = false)
     {
         var result = _pathways.Keys.ToList();

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3103519117643460734}
   - component: {fileID: 7807060715423863466}
   - component: {fileID: 1041216576572196309}
+  - component: {fileID: 6205270989248157581}
   m_Layer: 0
   m_Name: Pathway
   m_TagString: Untagged
@@ -32,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 5247591403826122128}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7807060715423863466
 SpriteRenderer:
@@ -102,6 +103,32 @@ MonoBehaviour:
   two: {fileID: 0}
   seal: {fileID: 1240139761469472252}
   activateSeal: 1
+--- !u!61 &6205270989248157581
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3103519117643460733}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1001 &4673213991878731869
 PrefabInstance:
   m_ObjectHideFlags: 0
