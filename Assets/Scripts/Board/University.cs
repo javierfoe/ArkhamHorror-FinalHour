@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class University : MonoBehaviour
@@ -8,6 +9,8 @@ public class University : MonoBehaviour
     private readonly Dictionary<Zone, List<Building>> _zoneBuildings = new();
     private Building _ritualBuilding;
     private Building[] _buildings;
+
+    public List<Building> Buildings => _buildings.ToList();
 
     public Building GetGateBuilding(Gate gate)
     {

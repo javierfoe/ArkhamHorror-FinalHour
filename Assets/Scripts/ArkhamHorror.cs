@@ -232,18 +232,22 @@ public class ArkhamHorror : MonoBehaviour
     }
 
     private IEnumerator StartLoop()
-    {/*
+    {
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
         
-        university.FinishMonsterMovement();*/
+        university.FinishMonsterMovement();
         while (true)
         {
-            var waitFor = new WaitForMoveAndSeal(university.GetGateBuilding(Gate.Heptagram));
+            var waitFor = new WaitForDamageMonsters(3,university.Buildings,2);
+            
+            confirm.onClick.AddListener(waitFor.ConfirmAction);
             
             yield return waitFor;
-            
-            Debug.Log(waitFor.MoveTo, waitFor.MoveTo?.gameObject);
-            Debug.Log(waitFor.SealOn, waitFor.SealOn?.gameObject);
+
+            foreach (var monster in waitFor.SelectedMonsters)
+            {
+                Debug.Log(monster, monster.gameObject);
+            }
         }
     }
 }

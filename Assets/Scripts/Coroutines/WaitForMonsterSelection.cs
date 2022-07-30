@@ -44,10 +44,5 @@ public abstract class WaitForMonsterSelection : WaitFor
         _selectedMonsters.Remove(monster);
     }
 
-    protected void ResetSelectedMonsters()
-    {
-        _selectedMonsters.Clear();
-    }
-
     protected abstract void SelectMonster(Monster monster);
 }

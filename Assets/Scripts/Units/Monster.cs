@@ -108,6 +108,8 @@ public class Monster : DwellerGeneric<Room>, IClickable<Monster>
         if (sprite == null) return;
 
         sprite.color = Color == Color.Blue ? blue : red;
+        
+        gameObject.name = $"{MaxHp} {Color} {MainMonsterSkill}";
     }
 
     public void OnMouseDown()
