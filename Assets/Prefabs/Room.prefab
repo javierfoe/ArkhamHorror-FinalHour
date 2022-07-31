@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normal: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
   wrecked: {r: 0.9339623, g: 0.42160967, b: 0.083704144, a: 1}
-  awakeWrecked: 1
+  awakeWrecked: 0
 --- !u!61 &2451053832210771754
 BoxCollider2D:
   m_ObjectHideFlags: 0

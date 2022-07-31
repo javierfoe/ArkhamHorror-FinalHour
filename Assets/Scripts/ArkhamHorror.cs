@@ -248,25 +248,27 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator StartLoop()
     {
-        SpawnInvestigators();
-        
-        /*yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
-        
-        university.FinishMonsterMovement();*/
-        
-        Debug.Log(_investigators[0], _investigators[0].gameObject);
+        //SpawnInvestigators();
+
+        yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
+
+        university.FinishMonsterMovement();
         while (true)
         {
-            var waitFor = new WaitForMoveRepairSealHeal(_investigators[0]);
-            
+            var waitFor = new WaitForTwiceMoveDamage(1, university.GetOtherBuildings()[0]);
+
             confirm.onClick.AddListener(waitFor.ConfirmAction);
-            
+
             yield return waitFor;
-            
-            Debug.Log($"Heal: {waitFor.Heal}");
-            Debug.Log($"SealOn: {waitFor.SealOn}", waitFor.SealOn?.gameObject);
-            Debug.Log($"RepairOn: {waitFor.RepairOn}", waitFor.RepairOn?.gameObject);
-            Debug.Log($"MoveTo: {waitFor.MoveTo}", waitFor.MoveTo?.gameObject);
+
+            Debug.Log(waitFor.MoveTo, waitFor.MoveTo?.gameObject);
+            if (waitFor.SelectedMonsters != null)
+            {
+                foreach (var monster in waitFor.SelectedMonsters)
+                {
+                    Debug.Log(monster, monster.gameObject);
+                }
+            }
         }
     }
 }

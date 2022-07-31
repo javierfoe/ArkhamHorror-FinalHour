@@ -5,12 +5,16 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
 {
     private readonly Dictionary<Building, List<Monster>> _buildingMonsters = new();
     private readonly Dictionary<Building, int> _buildingDamage = new();
-    private readonly int _damage, _buildingAmount;
+    private readonly int _damage, _damageSpecial, _buildingAmount;
+    private readonly Building _buildingSpecial;
 
-    public WaitForDamageMonsters(int damage, IEnumerable<Building> buildings, int buildingAmount = 0) : base(buildings)
+    public WaitForDamageMonsters(int damage, IEnumerable<Building> buildings, int buildingAmount = 0,
+        Building buildingSpecial = null, int damageSpecial = 0) : base(AddBuildingToSet(buildings, buildingSpecial))
     {
         _damage = damage;
-        var length = buildings.Count();
+        _damageSpecial = damageSpecial;
+        _buildingSpecial = buildingSpecial;
+        var length = buildings.Count() + (buildingSpecial ? 1 : 0);
         _buildingAmount = buildingAmount == 0 || buildingAmount > length ? length : buildingAmount;
     }
 
@@ -47,12 +51,29 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
     private void AddBuildingDictionary(Building building)
     {
         _buildingMonsters.Add(building, new List<Monster>());
-        _buildingDamage.Add(building, _damage);
+        var damage = _damage;
+        if (_buildingSpecial != null && building == _buildingSpecial)
+        {
+            damage = _damageSpecial;
+        }
+
+        _buildingDamage.Add(building, damage);
     }
 
     private void RemoveBuildingDictionary(Building building)
     {
         _buildingMonsters.Remove(building);
         _buildingDamage.Remove(building);
+    }
+
+    private static IEnumerable<Building> AddBuildingToSet(IEnumerable<Building> set, Building building)
+    {
+        var buildings = set.ToList();
+        if (building != null)
+        {
+            buildings.Add(building);
+        }
+
+        return buildings;
     }
 }
