@@ -43,7 +43,6 @@ public class WaitForMoveRepairSealHeal : WaitFor
             if (currentRepairOn == RepairOn)
             {
                 RepairOn = _repair.SelectedElement;
-                MoveTo = Default;
                 ConfirmAction();
                 return true;
             }
@@ -52,9 +51,7 @@ public class WaitForMoveRepairSealHeal : WaitFor
             {
                 _actions++;
                 RepairOn = _repair.SelectedElement;
-                ResetMove();
                 ResetRepair(Default);
-                return true;
             }
         }
 
@@ -64,7 +61,6 @@ public class WaitForMoveRepairSealHeal : WaitFor
             if (currentSealOn == SealOn)
             {
                 SealOn = _seal.SelectedElement;
-                MoveTo = Default;
                 ConfirmAction();
                 return true;
             }

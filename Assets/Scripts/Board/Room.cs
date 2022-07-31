@@ -30,7 +30,5 @@ public class Room : Location, IClickable<Room>
     public void OnMouseDown()
     {
         OnClick.Invoke(this);
-        if (Building == null) return;
-        Building.OnMouseDown();
     }
 }

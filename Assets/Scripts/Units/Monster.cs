@@ -115,7 +115,5 @@ public class Monster : Dweller, IClickable<Monster>
     public void OnMouseDown()
     {
         OnClick.Invoke(this);
-        if (Location == null || Building == null) return;
-        Building.OnMouseDown();
     }
 }

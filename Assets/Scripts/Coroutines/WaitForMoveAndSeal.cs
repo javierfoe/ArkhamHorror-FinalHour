@@ -1,5 +1,3 @@
-using UnityEngine.Profiling;
-
 public class WaitForMoveAndSeal : WaitFor
 {
 
