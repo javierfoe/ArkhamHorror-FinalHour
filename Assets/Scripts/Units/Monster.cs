@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Monster : DwellerGeneric<Room>, IClickable<Monster>
+public class Monster : Dweller, IClickable<Monster>
 {
 
     [SerializeField] private UnityEngine.Color blue, red;
@@ -26,7 +26,7 @@ public class Monster : DwellerGeneric<Room>, IClickable<Monster>
         }
     }
 
-    public Building Building => Location.Building;
+    public Room Room => Location as Room;
     public Color Color => MonsterDefinition.color;
     public MonsterSkill MainMonsterSkill => _skills?.Length > 0 ? _skills[0] : MonsterSkill.None;
 

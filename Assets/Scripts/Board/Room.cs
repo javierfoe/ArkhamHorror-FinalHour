@@ -1,10 +1,10 @@
-using System.Dynamic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Room : Location, IClickable<Room>
 {
     [SerializeField] private UnityEngine.Color normal, wrecked;
+    [SerializeField] private bool awakeWrecked;
     private SpriteRenderer _sprite;
     private bool _wreckage;
     public UnityEvent<Room> OnClick { get; } = new();
@@ -24,10 +24,13 @@ public class Room : Location, IClickable<Room>
     private void Awake()
     {
         _sprite = GetComponent<SpriteRenderer>();
+        Wreckage = awakeWrecked;
     }
 
     public void OnMouseDown()
     {
         OnClick.Invoke(this);
+        if (Building == null) return;
+        Building.OnMouseDown();
     }
 }

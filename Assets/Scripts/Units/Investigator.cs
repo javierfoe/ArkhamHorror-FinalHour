@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-public class Investigator : DwellerGeneric<Location>, IClickable<Investigator>
+public class Investigator : Dweller, IClickable<Investigator>
 {
     private readonly Pool<Action> _actions = new();
     private readonly Dictionary<int, ActionText> _actionDefinitions = new();
@@ -10,6 +10,14 @@ public class Investigator : DwellerGeneric<Location>, IClickable<Investigator>
     private int _currentHp;
 
     public UnityEvent<Investigator> OnClick { get; } = new();
+
+    public bool FullHp => _currentHp == MaxHp;
+
+    public Investigator Initialize(int maxHp)
+    {
+        MaxHp = maxHp;
+        return this;
+    }
 
     public void Hit(int damage)
     {

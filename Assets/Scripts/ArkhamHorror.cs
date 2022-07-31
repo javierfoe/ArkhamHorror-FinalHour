@@ -18,6 +18,8 @@ public class ArkhamHorror : MonoBehaviour
     [SerializeField] private University university;
     [SerializeField] private OmenCardContainer hand, actions;
     [SerializeField] private GatePool gatePool;
+    [SerializeField] private Investigator investigatorPrefab;
+    [SerializeField] private int investigatorAmount;
     [SerializeField] private Monster monsterPrefab;
     [SerializeField] private Monsters baseMonsters;
     [SerializeField] private Difficulty difficulty;
@@ -231,23 +233,40 @@ public class ArkhamHorror : MonoBehaviour
         StartCoroutine(StartLoop());
     }
 
+    private void SpawnInvestigators()
+    {
+        var buildings = university.Buildings;
+        _investigators = new Investigator[investigatorAmount];
+        for (var i = 0; i < investigatorAmount; i++)
+        {
+            var investigator = Instantiate(investigatorPrefab).Initialize(5);
+            _investigators[i] = investigator;
+            var building = buildings[Random.Range(0, buildings.Count - 1)];
+            building.MoveInvestigator(investigator);
+        }
+    }
+
     private IEnumerator StartLoop()
     {
-        yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
+        SpawnInvestigators();
         
-        university.FinishMonsterMovement();
+        /*yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
+        
+        university.FinishMonsterMovement();*/
+        
+        Debug.Log(_investigators[0], _investigators[0].gameObject);
         while (true)
         {
-            var waitFor = new WaitForDamageMonsters(3,university.Buildings,2);
+            var waitFor = new WaitForMoveRepairSealHeal(_investigators[0]);
             
             confirm.onClick.AddListener(waitFor.ConfirmAction);
             
             yield return waitFor;
-
-            foreach (var monster in waitFor.SelectedMonsters)
-            {
-                Debug.Log(monster, monster.gameObject);
-            }
+            
+            Debug.Log($"Heal: {waitFor.Heal}");
+            Debug.Log($"SealOn: {waitFor.SealOn}", waitFor.SealOn?.gameObject);
+            Debug.Log($"RepairOn: {waitFor.RepairOn}", waitFor.RepairOn?.gameObject);
+            Debug.Log($"MoveTo: {waitFor.MoveTo}", waitFor.MoveTo?.gameObject);
         }
     }
 }

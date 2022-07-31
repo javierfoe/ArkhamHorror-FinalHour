@@ -9,6 +9,7 @@ public abstract class WaitForSelection<T,U,V> : WaitFor where T : IClickable<U>
     protected WaitForSelection(IEnumerable<T> buildings)
     {
         _buildings = buildings;
+        if (buildings == null) return;
         foreach (var building in _buildings)
         {
             building.OnClick.AddListener(SelectElement);

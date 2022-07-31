@@ -3,32 +3,12 @@ using UnityEngine;
 public abstract class Dweller : MonoBehaviour
 {
     [SerializeField] protected Transform hitPoints;
+    
+    private Location _location;
+    public Building Building => Location.Building;
     public int MaxHp { get; protected set; }
 
-    public virtual void Destroy()
-    {
-        Destroy(gameObject);
-    }
-
-    protected virtual void Start()
-    {
-        for (var i = 0; i < hitPoints.childCount - MaxHp; i++)
-        {
-            hitPoints.GetChild(i).gameObject.SetActive(false);
-        }
-
-        for (var i = hitPoints.childCount - MaxHp; i < hitPoints.childCount; i++)
-        {
-            hitPoints.GetChild(i).gameObject.SetActive(true);
-        }
-    }
-}
-
-public abstract class DwellerGeneric<T> : Dweller where T : Location
-{
-    private T _location;
-
-    public T Location
+    public Location Location
     {
         get => _location;
         set
@@ -47,5 +27,23 @@ public abstract class DwellerGeneric<T> : Dweller where T : Location
     protected virtual void Fill(Location location)
     {
         _location.SetDweller(this);
+    }
+
+    public virtual void Destroy()
+    {
+        Destroy(gameObject);
+    }
+
+    protected virtual void Start()
+    {
+        for (var i = 0; i < hitPoints.childCount - MaxHp; i++)
+        {
+            hitPoints.GetChild(i).gameObject.SetActive(false);
+        }
+
+        for (var i = hitPoints.childCount - MaxHp; i < hitPoints.childCount; i++)
+        {
+            hitPoints.GetChild(i).gameObject.SetActive(true);
+        }
     }
 }

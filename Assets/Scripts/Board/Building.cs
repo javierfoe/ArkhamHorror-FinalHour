@@ -113,6 +113,18 @@ public class Building : MonoBehaviour, IClickable<Building>
         return result;
     }
 
+    public IEnumerable<Room> GetRepairableRooms()
+    {
+        var result = new List<Room>();
+        foreach (var room in _rooms)
+        {
+            if (!room.Wreckage) continue;
+            result.Add(room);
+        }
+
+        return result;
+    }
+
     public IEnumerator Wreck(int amount)
     {
         for (int i = 0, damage = 0; i < _rooms.Length && damage < amount; i++)
@@ -196,7 +208,7 @@ public class Building : MonoBehaviour, IClickable<Building>
 
     public void Wreck(Monster monster)
     {
-        monster.Location.Wreckage = true;
+        monster.Room.Wreckage = true;
         monster.Location = null;
         IncomingMonster(monster);
     }
