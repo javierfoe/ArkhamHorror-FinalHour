@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 public class WaitForTwiceMoveDamage : WaitFor
 {
@@ -13,7 +12,7 @@ public class WaitForTwiceMoveDamage : WaitFor
     public WaitForTwiceMoveDamage(int damage, Building building)
     {
         _firstBuilding = building;
-        _monsters = new WaitForDamageMonsters(damage, building.GetAdjacentBuildings(), 1, building, damage*2);
+        _monsters = new WaitForDamageMonsters(damage, building.GetAdjacentBuildings(), 1, building, damage * 2);
         ResetMove();
     }
 
@@ -43,10 +42,10 @@ public class WaitForTwiceMoveDamage : WaitFor
         }
 
         if (monsterBool) return true;
-        
-        if(SelectedMonsters is { Count: > 0 })
+
+        if (SelectedMonsters is { Count: > 0 })
             MoveTo = SelectedMonsters[0].Building;
-        
+
         return false;
     }
 
