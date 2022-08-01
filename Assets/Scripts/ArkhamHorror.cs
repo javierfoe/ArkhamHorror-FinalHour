@@ -248,14 +248,14 @@ public class ArkhamHorror : MonoBehaviour
 
     private IEnumerator StartLoop()
     {
-        //SpawnInvestigators();
+        SpawnInvestigators();
 
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
 
         university.FinishMonsterMovement();
         while (true)
         {
-            var waitFor = new WaitForTwiceMoveDamage(1, university.GetOtherBuildings()[0]);
+            var waitFor = new WaitForBomb(_investigators[0]);
 
             confirm.onClick.AddListener(waitFor.ConfirmAction);
 

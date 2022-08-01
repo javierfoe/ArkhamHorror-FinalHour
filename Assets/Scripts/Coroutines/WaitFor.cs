@@ -2,18 +2,18 @@ using System.Collections;
 
 public abstract class WaitFor : IEnumerator
 {
-    private bool confirmed, finishedAssigned;
+    private bool _confirmed;
 
     public object Current { get; protected set; }
 
     public virtual void ConfirmAction()
     {
-        confirmed = true;
+        _confirmed = true;
     }
 
     public virtual bool MoveNext()
     {
-        return !confirmed;
+        return !_confirmed;
     }
 
     public virtual void Reset()
