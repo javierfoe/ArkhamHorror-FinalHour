@@ -1,37 +1,27 @@
-using TMPro;
-
-public class WaitForMoveRepairSealHeal : WaitFor
+public class WaitForMoveRepairSealHeal : WaitForMoveOr
 {
-    private readonly Building _firstBuilding;
     private readonly Investigator _investigator;
-    private readonly int _distance;
     private readonly int _maxActions;
     private int _actions;
-    private WaitForMoveUpTo _move;
     private WaitForSelection<Pathway> _seal;
     private WaitForSelection<Room> _repair;
     private WaitForSelection<Investigator> _heal;
 
-    private Building Default => MoveTo ? MoveTo : _firstBuilding;
-    public Building MoveTo { get; private set; }
     public Pathway SealOn { get; private set; }
     public Room RepairOn { get; private set; }
     public bool Heal { get; private set; }
-    public bool FirstMove { get; private set; }
 
-    public WaitForMoveRepairSealHeal(Investigator investigator, int distance = 1)
+    public WaitForMoveRepairSealHeal(Investigator investigator, int distance = 1) : base(investigator.Building, distance)
     {
         _investigator = investigator;
         _maxActions = 2;
-        _distance = distance;
-        _firstBuilding = investigator.Building;
+        _move.OnChangeBuilding.AddListener(UpdateBuilding);
+        _move.OnRestart.AddListener(ResetCoroutines);
         ResetCoroutines();
     }
 
     public override bool MoveNext()
     {
-        if (!base.MoveNext()) return false;
-
         var moveBool = _move.MoveNext();
         var sealBool = _seal.MoveNext();
         var repairBool = _repair.MoveNext();
@@ -44,7 +34,7 @@ public class WaitForMoveRepairSealHeal : WaitFor
             {
                 RepairOn = _repair.SelectedElement;
                 ConfirmAction();
-                return true;
+                return false;
             }
 
             if (_actions < _maxActions)
@@ -62,7 +52,7 @@ public class WaitForMoveRepairSealHeal : WaitFor
             {
                 SealOn = _seal.SelectedElement;
                 ConfirmAction();
-                return true;
+                return false;
             }
 
             if (_actions < _maxActions)
@@ -78,7 +68,7 @@ public class WaitForMoveRepairSealHeal : WaitFor
             if (Heal)
             {
                 ConfirmAction();
-                return true;
+                return false;
             }
 
             if (_actions < _maxActions && !Heal)
@@ -89,38 +79,11 @@ public class WaitForMoveRepairSealHeal : WaitFor
             }
         }
 
-        if (!moveBool)
-        {
-            var currentMoveTo = _move.SelectedElement;
-            if (MoveTo != _firstBuilding && _firstBuilding == currentMoveTo)
-            {
-                MoveTo = currentMoveTo;
-                Reset();
-                return true;
-            }
-
-            if (currentMoveTo == MoveTo)
-            {
-                ConfirmAction();
-                return true;
-            }
-
-            if (_actions < _maxActions)
-            {
-                _actions++;
-                MoveTo = currentMoveTo;
-                ResetMove();
-            }
-        }
-
-        if (!moveBool && sealBool && healBool && repairBool && !FirstMove && MoveTo != _firstBuilding)
-        {
-            _seal = new WaitForSelection<Pathway>(MoveTo.GetPathways());
-            _repair = new WaitForSelection<Room>(MoveTo.GetRepairableRooms());
-            FirstMove = true;
-        }
-
-        return true;
+        if (moveBool) return true;
+        
+        MoveTo = Default;
+        ConfirmAction();
+        return false;
     }
 
     public override void Reset()
@@ -129,17 +92,30 @@ public class WaitForMoveRepairSealHeal : WaitFor
         ResetCoroutines();
     }
 
+    private void UpdateBuilding(Building building)
+    {
+        if (_actions >= _maxActions) return;
+        _actions++;
+        MoveTo = building;
+        
+        _seal = new WaitForSelection<Pathway>(MoveTo.GetPathways());
+        _repair = new WaitForSelection<Room>(MoveTo.GetRepairableRooms());
+    }
+
     private void ResetCoroutines()
     {
+        ResetCoroutines(Default);
+    }
+
+    private void ResetCoroutines(Building building)
+    {
         _actions = 0;
-        FirstMove = false;
         SealOn = null;
         RepairOn = null;
-        ResetMove();
-        ResetSeal(_firstBuilding);
-        ResetRepair(_firstBuilding);
-        ResetHeal();
         Heal = false;
+        ResetSeal(building);
+        ResetRepair(building);
+        ResetHeal();
     }
 
     private void ResetRepair(Building building)
@@ -155,10 +131,5 @@ public class WaitForMoveRepairSealHeal : WaitFor
     private void ResetHeal()
     {
         _heal = new WaitForSelection<Investigator>(_investigator.FullHp ? null : new[] { _investigator });
-    }
-
-    private void ResetMove()
-    {
-        _move = new WaitForMoveUpTo(_firstBuilding, _distance);
     }
 }

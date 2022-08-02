@@ -2,18 +2,16 @@ using System.Collections.Generic;
 
 public class WaitForTwiceMoveDamage : WaitFor
 {
-    private readonly Building _firstBuilding;
     private readonly WaitForDamageMonsters _monsters;
-    private WaitForMoveUpTo _move;
+    private readonly WaitForMoveUpTo _move;
 
     public Building MoveTo { get; private set; }
     public List<Monster> SelectedMonsters => _monsters.SelectedMonsters;
 
     public WaitForTwiceMoveDamage(int damage, Building building)
     {
-        _firstBuilding = building;
         _monsters = new WaitForDamageMonsters(damage, building.GetAdjacentBuildings(), 1, building, damage * 2);
-        ResetMove();
+        _move = new WaitForMoveUpTo(building, 2);
     }
 
 
@@ -24,21 +22,9 @@ public class WaitForTwiceMoveDamage : WaitFor
 
         if (!moveBool)
         {
-            var currentMoveTo = _move.SelectedElement;
-            if (MoveTo != _firstBuilding && _firstBuilding == currentMoveTo)
-            {
-                MoveTo = currentMoveTo;
-                Reset();
-                return true;
-            }
-
-            if (currentMoveTo == MoveTo)
-            {
-                return false;
-            }
-
-            MoveTo = currentMoveTo;
-            ResetMove();
+            MoveTo = _move.MoveTo;
+            ConfirmAction();
+            return false;
         }
 
         if (monsterBool) return true;
@@ -47,11 +33,6 @@ public class WaitForTwiceMoveDamage : WaitFor
             MoveTo = SelectedMonsters[0].Building;
 
         return false;
-    }
-
-    private void ResetMove()
-    {
-        _move = new WaitForMoveUpTo(_firstBuilding, 2);
     }
 
     public override void ConfirmAction()

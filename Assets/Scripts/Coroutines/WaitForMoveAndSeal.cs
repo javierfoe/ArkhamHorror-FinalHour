@@ -1,71 +1,41 @@
-public class WaitForMoveAndSeal : WaitFor
+public class WaitForMoveAndSeal : WaitForMoveOr
 {
-
-    private readonly Building _firstBuilding;
-    private readonly int _distance;
-    private WaitForMoveUpTo _move;
     private WaitForSelection<Pathway> _seal;
-
-    private Building Default => MoveTo ? MoveTo : _firstBuilding;
-    public Building MoveTo { get; private set; }
     public Pathway SealOn { get; private set; }
-    public bool FirstMove { get; private set; }
 
-    public WaitForMoveAndSeal(Building building, int distance = 1)
+    public WaitForMoveAndSeal(Building building, int distance = 1) : base(building, distance)
     {
-        _distance = distance;
-        _firstBuilding = building;
+        _move.OnChangeBuilding.AddListener(ResetSeal);
         ResetCoroutines();
     }
 
     public override bool MoveNext()
     {
-        if (!base.MoveNext()) return false;
-        
         var moveBool = _move.MoveNext();
         var sealBool = _seal.MoveNext();
 
         if (!moveBool)
         {
-            var currentMoveTo = _move.SelectedElement;
-            if (MoveTo != _firstBuilding && _firstBuilding == currentMoveTo)
-            {
-                MoveTo = currentMoveTo;
-                Reset();
-                return true;
-            }
-
-            if (currentMoveTo == MoveTo)
-            {
-                ConfirmAction();
-                return true;
-            }
-            
-            MoveTo = currentMoveTo;
-            ResetMove();
+            MoveTo = _move.MoveTo;
+            ConfirmAction();
+            return false;
         }
 
-        if (!sealBool)
+        if (sealBool) return true;
+
+        var currentSealOn = _seal.SelectedElement;
+        if (currentSealOn == SealOn)
         {
-            var currentSealOn = _seal.SelectedElement;
-            if (currentSealOn == SealOn)
-            {
-                SealOn = _seal.SelectedElement;
-                MoveTo = Default;
-                ConfirmAction();
-                return true;
-            }
             SealOn = _seal.SelectedElement;
-            ResetSeal(Default);
-        }
-        
-        if (!moveBool && sealBool && !FirstMove && MoveTo != _firstBuilding)
-        {
-            _seal = new WaitForSelection<Pathway>(MoveTo.GetPathways());
-            FirstMove = true;
+            MoveTo = Default;
+            ConfirmAction();
+            return false;
         }
 
-        return moveBool || sealBool;
+        SealOn = _seal.SelectedElement;
+        ResetSeal(Default);
+
+        return true;
     }
 
     public override void Reset()
@@ -76,19 +46,12 @@ public class WaitForMoveAndSeal : WaitFor
 
     private void ResetCoroutines()
     {
-        FirstMove = false;
         SealOn = null;
-        ResetMove();
-        ResetSeal(_firstBuilding);
+        ResetSeal(Default);
     }
 
     private void ResetSeal(Building building)
     {
         _seal = new WaitForSelection<Pathway>(building.GetPathways());
-    }
-
-    private void ResetMove()
-    {
-        _move = new WaitForMoveUpTo(_firstBuilding, _distance);
     }
 }
