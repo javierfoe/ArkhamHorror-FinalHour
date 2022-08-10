@@ -3,10 +3,19 @@ using System.Linq;
 
 public class WaitForDamageMonsters : WaitForMonsterSelection
 {
+    private readonly int _damage, _damageSpecial, _buildingAmount;
+    private readonly bool _twice;
     private readonly Dictionary<Building, List<Monster>> _buildingMonsters = new();
     private readonly Dictionary<Building, int> _buildingDamage = new();
-    private readonly int _damage, _damageSpecial, _buildingAmount;
     private readonly Building _buildingSpecial;
+
+    public int TotalDamage { get; private set; }
+
+    public WaitForDamageMonsters(int damage, IEnumerable<Building> buildings, bool twice) : this(damage * 2, buildings,
+        2)
+    {
+        _twice = twice;
+    }
 
     public WaitForDamageMonsters(int damage, IEnumerable<Building> buildings, int buildingAmount = 0,
         Building buildingSpecial = null, int damageSpecial = 0) : base(AddBuildingToSet(buildings, buildingSpecial))
@@ -33,6 +42,7 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
         if (_buildingMonsters[building].Contains(monster))
         {
             _buildingDamage[building] += hp;
+            TotalDamage -= hp;
             _buildingMonsters[building].Remove(monster);
             RemoveSelectedMonster(monster);
             if (_buildingMonsters[building].Count < 1)
@@ -40,12 +50,31 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
                 RemoveBuildingDictionary(building);
             }
         }
-        else if (_buildingDamage[building] >= hp)
+        else if (_buildingDamage[building] >= hp && TwiceCondition(hp, building))
         {
+            TotalDamage += hp;
             _buildingDamage[building] -= hp;
             _buildingMonsters[building].Add(monster);
             AddSelectedMonster(monster);
         }
+    }
+
+    private bool TwiceCondition(int monsterHp, Building building)
+    {
+        if (!_twice) return true;
+        var twiceDamage = false;
+        foreach (var pair in _buildingDamage)
+        {
+            var key = pair.Key;
+            var value = pair.Value;
+            if (key == building) continue;
+            if (value <  _damage / 2)
+            {
+                twiceDamage = true;
+                break;
+            }
+        }
+        return TotalDamage + monsterHp <= _damage && !twiceDamage;
     }
 
     private void AddBuildingDictionary(Building building)

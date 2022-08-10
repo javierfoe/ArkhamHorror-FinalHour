@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public abstract class WaitForSelection<T,U,V> : WaitFor where T : IClickable<U>
+public abstract class WaitForSelection<T, U, V> : WaitFor where T : IClickable<U>
 {
     private IEnumerable<T> _buildings;
 
@@ -36,7 +36,10 @@ public abstract class WaitForSelection<T,U,V> : WaitFor where T : IClickable<U>
 
 public class WaitForSelection<T> : WaitForSelection<T, T, T> where T : IClickable<T>
 {
-    public WaitForSelection(IEnumerable<T> elements): base(elements){}
+    public WaitForSelection(IEnumerable<T> elements) : base(elements)
+    {
+    }
+
     protected override T Cast(T element)
     {
         return element;

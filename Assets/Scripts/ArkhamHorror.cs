@@ -255,7 +255,7 @@ public class ArkhamHorror : MonoBehaviour
         university.FinishMonsterMovement();
         while (true)
         {
-            var waitFor = new WaitForBomb(_investigators[0]);
+            var waitFor = new WaitForTwiceMoveDamage(3,university.GetGateBuilding(Gate.Heptagram), university.Buildings);
 
             confirm.onClick.AddListener(waitFor.ConfirmAction);
 
@@ -266,7 +266,7 @@ public class ArkhamHorror : MonoBehaviour
             {
                 foreach (var monster in waitFor.SelectedMonsters)
                 {
-                    Debug.Log(monster, monster.gameObject);
+                    Debug.Log($"{monster}: {monster.Building}", monster.Building.gameObject);
                 }
             }
         }

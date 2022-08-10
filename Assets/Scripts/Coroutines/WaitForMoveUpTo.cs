@@ -33,12 +33,15 @@ public class WaitForMoveUpTo : WaitFor
         if (!moveBool)
         {
             var currentMoveTo = _buildingSelection.SelectedElement;
-            if (MoveTo != _firstBuilding && _firstBuilding == currentMoveTo)
+            if (currentMoveTo == _firstBuilding)
             {
-                MoveTo = currentMoveTo;
-                OnRestart.Invoke(MoveTo);
-                Reset();
-                return true;
+                OnRestart.Invoke(currentMoveTo);
+                if (MoveTo != _firstBuilding)
+                {
+                    MoveTo = currentMoveTo;
+                    Reset();
+                    return true;
+                }
             }
 
             if (currentMoveTo == _selection)

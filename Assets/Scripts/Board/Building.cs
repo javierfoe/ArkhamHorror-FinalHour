@@ -44,6 +44,34 @@ public class Building : MonoBehaviour, IClickable<Building>
     }
 
     public int GatePower { get; private set; }
+
+    public int GetDistanceTo(Building destination)
+    {
+        if (destination == this) return 0;
+        var auxBuildings = new List<Building> { this };
+        var distance = 1;
+        var maxLoops = 6;
+        while(distance < maxLoops)
+        {
+            var iteration = new List<Building>(auxBuildings);
+            auxBuildings.Clear();
+            foreach (var auxBuilding in iteration)
+            {
+                foreach (var adjacent in auxBuilding.GetAdjacentBuildings())
+                {
+                    if (adjacent == destination)
+                    {
+                        return distance;
+                    }
+                    if (auxBuildings.Contains(adjacent)) continue;
+                    auxBuildings.Add(adjacent);
+                }
+            }
+
+            distance++;
+        }
+        return -1;
+    }
     
     public static IEnumerable<Building> GetDistanceBuildings(Building origin, int distance)
     {
