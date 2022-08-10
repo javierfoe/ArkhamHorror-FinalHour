@@ -1,9 +1,11 @@
+using System;
 using UnityEngine.Events;
 
 public class WaitForDoubleClickBuilding : WaitFor
 {
     public readonly UnityEvent<Building> OnChangeBuilding = new(), OnRestart = new();
-    
+
+    private readonly Func<bool> _condition;
     private readonly Building _firstBuilding;
     private readonly int _distance;
     private WaitForSelection<Building> _buildingSelection;
@@ -19,8 +21,9 @@ public class WaitForDoubleClickBuilding : WaitFor
         }
     }
     
-    public WaitForDoubleClickBuilding(Building origin, int distance)
+    public WaitForDoubleClickBuilding(Building origin, int distance, Func<bool> condition = null)
     {
+        _condition = condition;
         _distance = distance;
         _firstBuilding = origin;
         ResetMove();
@@ -44,7 +47,7 @@ public class WaitForDoubleClickBuilding : WaitFor
                 }
             }
 
-            if (currentMoveTo == _selection)
+            if (currentMoveTo == _selection && (_condition == null || _condition()))
             {
                 ConfirmAction();
                 return false;
