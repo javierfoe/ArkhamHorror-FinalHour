@@ -5,7 +5,7 @@ public class WaitForTwiceMoveDamage : WaitFor
     private readonly int _damage, _distance;
     private readonly Building _origin;
     private readonly IEnumerable<Building> _buildings;
-    private WaitForMoveUpTo _move;
+    private WaitForDoubleClickBuilding _move;
     private WaitForDamageMonsters _monsters;
 
     public Building MoveTo { get; private set; }
@@ -47,7 +47,7 @@ public class WaitForTwiceMoveDamage : WaitFor
     {
         var distance = _monsters == null || _monsters.TotalDamage == 0 ? _distance * 2 : (_monsters.TotalDamage > 3 ? 0 : _distance);
         if (_move != null && _origin.GetDistanceTo(_move.MoveTo) <= distance) return;
-        _move = new WaitForMoveUpTo(_origin, distance);
+        _move = new WaitForDoubleClickBuilding(_origin, distance);
         _move.OnChangeBuilding.AddListener(ResetDamage);
         _move.OnRestart.AddListener(ResetDamageZero);
     }

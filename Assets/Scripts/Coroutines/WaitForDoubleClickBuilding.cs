@@ -1,6 +1,6 @@
 using UnityEngine.Events;
 
-public class WaitForMoveUpTo : WaitFor
+public class WaitForDoubleClickBuilding : WaitFor
 {
     public readonly UnityEvent<Building> OnChangeBuilding = new(), OnRestart = new();
     
@@ -19,7 +19,7 @@ public class WaitForMoveUpTo : WaitFor
         }
     }
     
-    public WaitForMoveUpTo(Building origin, int distance)
+    public WaitForDoubleClickBuilding(Building origin, int distance)
     {
         _distance = distance;
         _firstBuilding = origin;
