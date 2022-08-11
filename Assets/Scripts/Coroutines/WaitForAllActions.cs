@@ -3,8 +3,9 @@ using UnityEngine.Events;
 
 public abstract class WaitForAllActions : WaitForMoveOr
 {
-    protected readonly bool SealBool, RepairBool, HealBool, DamageBool;
-    private readonly int _maxActions, _damageAmount;
+    protected readonly int DamageAmount;
+    private readonly bool _sealBool, _repairBool, _healBool, _monstersBool;
+    private readonly int _maxActions;
     private readonly Investigator _player;
     private int _actions;
     private Room _room;
@@ -13,41 +14,55 @@ public abstract class WaitForAllActions : WaitForMoveOr
     private WaitForSelection<Pathway> _seal;
     private WaitForSelection<Room> _repair;
     private WaitForSelection<Investigator> _heal;
-    private WaitForDamageMonsters _damage;
+    private WaitForMonsterSelection _monsters;
 
-    public Pathway SealOn
+    protected Pathway SealOn
     {
         get => _pathway;
         private set => _pathway = value;
     }
 
-    public Room RepairOn
+    protected Room RepairOn
     {
         get => _room;
         private set => _room = value;
     }
 
-    public Investigator Heal
+    protected Investigator Heal
     {
         get => _investigator;
         private set => _investigator = value;
     }
 
-    public List<Monster> SelectedMonsters { get; private set; } = new();
+    protected List<Monster> SelectedMonsters { get; private set; } = new();
 
-    protected WaitForAllActions(Investigator investigator, bool seal, bool repair, bool heal, bool damage,
-        int distance, int maxActions = 5) : base(investigator.Building, distance)
+    protected WaitForAllActions(Building building, bool seal, bool repair, bool heal, bool monsters,
+        int distance, int maxActions = 5, int damage = 0) : base(building, distance)
     {
-        _player = investigator;
+        DamageAmount = damage;
         _maxActions = maxActions;
-        SealBool = seal;
-        RepairBool = repair;
-        HealBool = heal;
-        DamageBool = damage;
+        _sealBool = seal;
+        _repairBool = repair;
+        _healBool = heal;
+        _monstersBool = monsters;
 
         Move.OnChangeBuilding.AddListener(UpdateBuilding);
         Move.OnRestart.AddListener(ResetCoroutines);
         ResetCoroutines();
+    }
+
+    protected WaitForAllActions(Investigator investigator, bool seal, bool repair, bool heal, bool monsters,
+        int distance, int maxActions = 5, int damage = 0) : this(investigator.Building, seal, repair, heal, monsters,
+        distance,
+        maxActions, damage)
+    {
+        _player = investigator;
+    }
+
+    protected WaitForAllActions(Building building, int distance, int damage = 0, bool seal = false, int maxActions = 5)
+        : this(building,
+            seal, false, false, true, distance, maxActions, damage)
+    {
     }
 
     public override bool MoveNext()
@@ -72,41 +87,76 @@ public abstract class WaitForAllActions : WaitForMoveOr
     public override void ConfirmAction()
     {
         base.ConfirmAction();
-        if (DamageBool)
+        if (_monstersBool)
         {
-            SelectedMonsters = _damage.SelectedMonsters;
+            SelectedMonsters = _monsters.SelectedMonsters;
         }
     }
 
-    protected virtual void ResetRepair(Building building)
+    protected virtual WaitForSelection<Room> ResetRepairCoroutine(Building building)
     {
-        if (!RepairBool) return;
-        _repair = new WaitForSelection<Room>(building.GetRepairableRooms());
+        return new WaitForSelection<Room>(building.GetRepairableRooms());
     }
 
-    protected virtual void ResetSeal(Building building)
+    protected virtual WaitForSelection<Pathway> ResetSealCoroutine(Building building)
     {
-        if (!SealBool) return;
-        _seal = new WaitForSelection<Pathway>(building.GetPathways());
+        return new WaitForSelection<Pathway>(building.GetPathways());
     }
 
-    protected virtual void ResetDamage(Building building)
+    protected virtual WaitForMonsterSelection ResetMonstersCoroutine(Building building)
     {
-        if (!DamageBool) return;
+        return new WaitForDamageMonsters(DamageAmount, new[] { building });
+    }
+
+    protected virtual WaitForSelection<Investigator> ResetHealCoroutine()
+    {
+        return new WaitForSelection<Investigator>(new[] { _player });
+    }
+
+    protected virtual void UpdateSealCoroutine(Building building)
+    {
+        _seal = ResetSealCoroutine(building);
+    }
+
+    protected virtual void UpdateRepairCoroutine(Building building)
+    {
+        _repair = ResetRepairCoroutine(building);
+    }
+
+    protected virtual void UpdateMonstersCoroutine(Building building)
+    {
+        _monsters = ResetMonstersCoroutine(building);
+    }
+    
+    private void ResetRepair(Building building)
+    {
+        if (!_repairBool) return;
+        UpdateRepairCoroutine(building);
+    }
+
+    private void ResetSeal(Building building)
+    {
+        if (!_sealBool) return;
+        UpdateSealCoroutine(building);
+    }
+
+    private void ResetMonsters(Building building)
+    {
+        if (!_monstersBool) return;
         if (_actions > 0)
         {
             DecreaseActions();
         }
 
-        _damage = new WaitForDamageMonsters(_damageAmount, new[] { building });
-        _damage.OnEmptied.AddListener(DecreaseActions);
-        _damage.OnNotEmpty.AddListener(IncreaseActions);
+        UpdateMonstersCoroutine(building);
+        _monsters.OnEmptied.AddListener(DecreaseActions);
+        _monsters.OnNotEmpty.AddListener(IncreaseActions);
     }
 
-    protected virtual void ResetHeal()
+    private void ResetHeal()
     {
-        if (!HealBool) return;
-        _heal = new WaitForSelection<Investigator>(new[] { _player });
+        if (!_healBool) return;
+        _heal = ResetHealCoroutine();
     }
 
     private bool ProcessCoroutine<T>(WaitForSelection<T> waitFor, ref T element, UnityAction action)
@@ -153,8 +203,9 @@ public abstract class WaitForAllActions : WaitForMoveOr
 
         MoveTo = building;
 
-        _seal = new WaitForSelection<Pathway>(MoveTo.GetPathways());
-        _repair = new WaitForSelection<Room>(MoveTo.GetRepairableRooms());
+        UpdateSealCoroutine(building);
+        UpdateRepairCoroutine(building);
+        UpdateMonstersCoroutine(building);
     }
 
     private void ResetCoroutines()
@@ -178,9 +229,97 @@ public abstract class WaitForAllActions : WaitForMoveOr
         SealOn = null;
         RepairOn = null;
         Heal = null;
+        SelectedMonsters.Clear();
         ResetSeal(building);
         ResetRepair(building);
-        ResetDamage(building);
+        ResetMonsters(building);
         ResetHeal();
+    }
+}
+
+public class WaitForMoveSeal : WaitForAllActions
+{
+    public new Pathway SealOn => base.SealOn;
+
+    public WaitForMoveSeal(Building building, int distance = 1) : base(building, true, false, false, false, distance)
+    {
+    }
+}
+
+public class WaitForMoveSealRepairHeal : WaitForAllActions
+{
+    public new Pathway SealOn => base.SealOn;
+    public new Investigator Heal => base.Heal;
+    public new Room RepairOn => base.RepairOn;
+
+    public WaitForMoveSealRepairHeal(Investigator investigator, int distance = 1, int maxActions = 2) : base(investigator, true, true, true,
+        false, distance, maxActions)
+    {
+    }
+}
+
+public class WaitForMoveSelectMonsters : WaitForAllActions
+{
+    private readonly Building _startingBuilding;
+    private readonly int _monsterAmount;
+    private readonly bool _alwaysStartingBuilding, _adjacent, _monsterSelection;
+    public List<Monster> DamagedMonsters => base.SelectedMonsters;
+
+    public WaitForMoveSelectMonsters(Building building, int distance = 1, int monsterAmount = 1) : base(building, false,
+        false, false, true, distance)
+    {
+        _monsterAmount = monsterAmount;
+        _monsterSelection = true;
+    }
+
+    public WaitForMoveSelectMonsters(Building building, int distance, int damage, bool adjacent = false,
+        bool alwaysStartingBuilding = false, bool seal = false) : base(building, distance, damage, seal)
+    {
+        _adjacent = adjacent;
+        if (!alwaysStartingBuilding) return;
+        _alwaysStartingBuilding = true;
+        _startingBuilding = building;
+    }
+
+    protected override void UpdateMonstersCoroutine(Building building)
+    {
+        if(!_alwaysStartingBuilding) base.UpdateMonstersCoroutine(building);
+    }
+
+    protected override WaitForMonsterSelection ResetMonstersCoroutine(Building building)
+    {
+        if (_monsterSelection) return new WaitForMonsterSelection(new []{building}, 1);
+        if (!_adjacent) return base.ResetMonstersCoroutine(building);
+        var auxBuilding = _alwaysStartingBuilding ? _startingBuilding : building;
+        return new WaitForDamageMonsters(DamageAmount, auxBuilding.GetAdjacentBuildings(), 1);
+    }
+}
+
+public class WaitForMoveDamageSeal : WaitForMoveSelectMonsters
+{
+    public new Pathway SealOn => base.SealOn;
+
+    public WaitForMoveDamageSeal(Building building, int distance, int damage, bool adjacent = false) : base(building, distance, damage, adjacent, false, true)
+    {
+    }
+}
+
+public class WaitForMoveDamageSelectAdjacentMonsters : WaitForMoveSelectMonsters
+{
+    private readonly int _monsterAmount;
+    private WaitForMonsterSelection _adjacentMonsters;
+
+    public new List<Monster> SelectedMonsters => _adjacentMonsters.SelectedMonsters;
+
+    public WaitForMoveDamageSelectAdjacentMonsters(Building building, int distance, int damage, int monsterAmount) :
+        base(building, distance, damage)
+    {
+        _monsterAmount = monsterAmount;
+    }
+
+    protected override WaitForMonsterSelection ResetMonstersCoroutine(Building building)
+    {
+        _adjacentMonsters = new WaitForAdjacentMonsterSelection(_monsterAmount, building);
+        return base.ResetMonstersCoroutine(building);
     }
 }

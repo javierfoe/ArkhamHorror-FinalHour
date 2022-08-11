@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-public abstract class WaitForMonsterSelection : WaitFor
+public class WaitForMonsterSelection : WaitFor
 {
     public readonly UnityEvent OnNotEmpty = new(), OnEmptied = new();
 
     private readonly List<Monster> _selectedMonsters = new();
     private readonly IEnumerable<Monster> _monsters;
+    private readonly int _maxMonsters;
+    private int _currentMonsters;
 
     private bool _empty = true;
     public List<Monster> SelectedMonsters => new(_selectedMonsters);
 
-    protected WaitForMonsterSelection(IEnumerable<Building> buildings)
+    public WaitForMonsterSelection(IEnumerable<Building> buildings, int amount = int.MaxValue)
     {
+        _maxMonsters = amount;
         List<Monster> monsters = new();
         foreach (var building in buildings)
         {
@@ -59,5 +62,24 @@ public abstract class WaitForMonsterSelection : WaitFor
         OnEmptied.Invoke();
     }
 
-    protected abstract void SelectMonster(Monster monster);
+
+    protected virtual void SelectMonster(Monster monster)
+    {
+        if (IsSelected(monster))
+        {
+            _currentMonsters--;
+            RemoveSelectedMonster(monster);
+        } else if (_currentMonsters < _maxMonsters)
+        {
+            _currentMonsters++;
+            AddSelectedMonster(monster);
+        }
+    }
+}
+
+public class WaitForAdjacentMonsterSelection : WaitForMonsterSelection
+{
+    public WaitForAdjacentMonsterSelection(int amount, Building building) : base(building.GetAdjacentBuildings(), amount)
+    {
+    }
 }
