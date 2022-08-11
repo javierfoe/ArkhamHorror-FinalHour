@@ -22,11 +22,11 @@ public class WaitForBomb : WaitForMoveOr
     {
         if (!_bomb)
         {
-            var moveBool = _move.MoveNext();
+            var moveBool = Move.MoveNext();
 
             if (!moveBool)
             {
-                MoveTo = _move.MoveTo;
+                MoveTo = Move.MoveTo;
                 ConfirmAction();
                 return false;
             }
@@ -34,9 +34,9 @@ public class WaitForBomb : WaitForMoveOr
 
         if (_damageCoroutine.MoveNext()) return true;
 
-        if (!_bomb && _damageCoroutine.SelectedMonsters is { Count: > 0 })
+        if (!_bomb && _damageCoroutine.Building != null)
         {
-            MoveTo = _damageCoroutine.SelectedMonsters[0].Building;
+            MoveTo = _damageCoroutine.Building;
         }
 
         SelectedMonsters = _damageCoroutine.SelectedMonsters;

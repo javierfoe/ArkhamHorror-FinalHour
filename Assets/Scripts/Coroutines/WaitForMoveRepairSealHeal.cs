@@ -15,14 +15,14 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
     {
         _investigator = investigator;
         _maxActions = 2;
-        _move.OnChangeBuilding.AddListener(UpdateBuilding);
-        _move.OnRestart.AddListener(ResetCoroutines);
+        Move.OnChangeBuilding.AddListener(UpdateBuilding);
+        Move.OnRestart.AddListener(ResetCoroutines);
         ResetCoroutines();
     }
 
     public override bool MoveNext()
     {
-        var moveBool = _move.MoveNext();
+        var moveBool = Move.MoveNext();
         var sealBool = _seal.MoveNext();
         var repairBool = _repair.MoveNext();
         var healBool = _heal.MoveNext();

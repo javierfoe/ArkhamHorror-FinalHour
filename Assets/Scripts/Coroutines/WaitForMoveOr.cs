@@ -1,11 +1,11 @@
 public abstract class WaitForMoveOr : WaitFor
 {
-    protected readonly WaitForDoubleClickBuilding _move;
-    protected Building Default => _move.MoveTo;
+    protected readonly WaitForDoubleClickBuilding Move;
+    protected Building Default => Move.MoveTo;
     public Building MoveTo { get; protected set; }
 
     protected WaitForMoveOr(Building building, int distance)
     {
-        _move = new WaitForDoubleClickBuilding(building, distance);
+        Move = new WaitForDoubleClickBuilding(building, distance);
     }
 }

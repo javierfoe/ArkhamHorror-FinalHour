@@ -10,6 +10,7 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
     private readonly Building _buildingSpecial;
 
     public int TotalDamage { get; private set; }
+    public Building Building => SelectedMonsters is { Count: > 0 } ? SelectedMonsters[0].Building : null;
 
     public WaitForDamageMonsters(int damage, IEnumerable<Building> buildings, bool twice) : this(damage * 2, buildings,
         2)

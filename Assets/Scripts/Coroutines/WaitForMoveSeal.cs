@@ -1,22 +1,22 @@
-public class WaitForMoveAndSeal : WaitForMoveOr
+public class WaitForMoveSeal : WaitForMoveOr
 {
     private WaitForSelection<Pathway> _seal;
     public Pathway SealOn { get; private set; }
 
-    public WaitForMoveAndSeal(Building building, int distance = 1) : base(building, distance)
+    public WaitForMoveSeal(Building building, int distance = 1) : base(building, distance)
     {
-        _move.OnChangeBuilding.AddListener(ResetSeal);
+        Move.OnChangeBuilding.AddListener(ResetSeal);
         ResetCoroutines();
     }
 
     public override bool MoveNext()
     {
-        var moveBool = _move.MoveNext();
+        var moveBool = Move.MoveNext();
         var sealBool = _seal.MoveNext();
 
         if (!moveBool)
         {
-            MoveTo = _move.MoveTo;
+            MoveTo = Move.MoveTo;
             ConfirmAction();
             return false;
         }
