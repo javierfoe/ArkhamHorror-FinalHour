@@ -1,11 +1,16 @@
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public abstract class WaitForMonsterSelection : WaitFor
 {
+    public readonly UnityEvent OnNotEmpty = new(), OnEmptied = new();
+
     private readonly List<Monster> _selectedMonsters = new();
     private readonly IEnumerable<Monster> _monsters;
-    public List<Monster> SelectedMonsters => new (_selectedMonsters);
-    
+
+    private bool _empty = true;
+    public List<Monster> SelectedMonsters => new(_selectedMonsters);
+
     protected WaitForMonsterSelection(IEnumerable<Building> buildings)
     {
         List<Monster> monsters = new();
@@ -13,6 +18,7 @@ public abstract class WaitForMonsterSelection : WaitFor
         {
             monsters.AddRange(building.GetMonsters());
         }
+
         _monsters = monsters;
         foreach (var monster in _monsters)
         {
@@ -37,11 +43,20 @@ public abstract class WaitForMonsterSelection : WaitFor
     protected void AddSelectedMonster(Monster monster)
     {
         _selectedMonsters.Add(monster);
+        if (_empty)
+        {
+            OnNotEmpty.Invoke();
+        }
+
+        _empty = false;
     }
 
     protected void RemoveSelectedMonster(Monster monster)
     {
         _selectedMonsters.Remove(monster);
+        if (_selectedMonsters.Count > 0) return;
+        _empty = true;
+        OnEmptied.Invoke();
     }
 
     protected abstract void SelectMonster(Monster monster);
