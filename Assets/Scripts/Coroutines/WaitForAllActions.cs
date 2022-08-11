@@ -1,24 +1,38 @@
-public class WaitForMoveRepairSealHeal : WaitForMoveOr
+public abstract class WaitForAllActions : WaitForMoveOr
 {
-    private readonly Investigator _investigator;
+    private readonly bool _sealBool, _repairBool, _healBool, _damageBool;
     private readonly int _maxActions;
     private int _actions;
     private WaitForSelection<Pathway> _seal;
     private WaitForSelection<Room> _repair;
     private WaitForSelection<Investigator> _heal;
+    private WaitForDamageMonsters _damage;
 
     public Pathway SealOn { get; private set; }
     public Room RepairOn { get; private set; }
-    public bool Heal { get; private set; }
+    public Investigator Heal { get; private set; }
 
-    public WaitForMoveRepairSealHeal(Investigator investigator, int distance = 1) : base(investigator.Building, distance)
+    private WaitForAllActions(Investigator investigator, int distance) : base(investigator.Building, distance)
     {
-        _investigator = investigator;
-        _maxActions = 2;
+    }
+
+    protected WaitForAllActions(Investigator investigator, bool seal, bool repair, bool heal, bool damage,
+        int maxActions = 5, int distance = 1) : this(investigator, distance)
+    {
+        _maxActions = maxActions;
+        _sealBool = seal;
+        _repairBool = repair;
+        _healBool = heal;
+        _damageBool = damage;
+    }
+/*
+    public WaitForAllActions(Investigator investigator, int distance = 1) :
+        this(investigator, true, true, true, false, 2, distance)
+    {
         Move.OnChangeBuilding.AddListener(UpdateBuilding);
         Move.OnRestart.AddListener(ResetCoroutines);
         ResetCoroutines();
-    }
+    }*/
 
     public override bool MoveNext()
     {
@@ -32,7 +46,7 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
             var currentRepairOn = _repair.SelectedElement;
             if (currentRepairOn == RepairOn)
             {
-                RepairOn = _repair.SelectedElement;
+                RepairOn = currentRepairOn;
                 ConfirmAction();
                 return false;
             }
@@ -40,7 +54,7 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
             if (_actions < _maxActions)
             {
                 _actions++;
-                RepairOn = _repair.SelectedElement;
+                RepairOn = currentRepairOn;
                 ResetRepair(Default);
             }
         }
@@ -50,7 +64,7 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
             var currentSealOn = _seal.SelectedElement;
             if (currentSealOn == SealOn)
             {
-                SealOn = _seal.SelectedElement;
+                SealOn = currentSealOn;
                 ConfirmAction();
                 return false;
             }
@@ -58,29 +72,31 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
             if (_actions < _maxActions)
             {
                 _actions++;
-                SealOn = _seal.SelectedElement;
+                SealOn = currentSealOn;
                 ResetSeal(Default);
             }
         }
 
         if (!healBool)
         {
-            if (Heal)
+            var currentHeal = _heal.SelectedElement;
+            if (currentHeal == Heal)
             {
+                Heal = currentHeal;
                 ConfirmAction();
                 return false;
             }
 
-            if (_actions < _maxActions && !Heal)
+            if (_actions < _maxActions)
             {
                 _actions++;
-                Heal = true;
+                Heal = currentHeal;
                 ResetHeal();
             }
         }
 
         if (moveBool) return true;
-        
+
         MoveTo = Default;
         ConfirmAction();
         return false;
@@ -95,9 +111,13 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
     private void UpdateBuilding(Building building)
     {
         if (_actions >= _maxActions) return;
-        _actions++;
+        if (building != MoveTo && !IsOrigin(building))
+        {
+            _actions++;
+        }
+
         MoveTo = building;
-        
+
         _seal = new WaitForSelection<Pathway>(MoveTo.GetPathways());
         _repair = new WaitForSelection<Room>(MoveTo.GetRepairableRooms());
     }
@@ -112,24 +132,23 @@ public class WaitForMoveRepairSealHeal : WaitForMoveOr
         _actions = 0;
         SealOn = null;
         RepairOn = null;
-        Heal = false;
+        Heal = null;
         ResetSeal(building);
         ResetRepair(building);
         ResetHeal();
     }
 
-    private void ResetRepair(Building building)
+    protected virtual void ResetRepair(Building building)
     {
         _repair = new WaitForSelection<Room>(building.GetRepairableRooms());
     }
 
-    private void ResetSeal(Building building)
+    protected virtual void ResetSeal(Building building)
     {
         _seal = new WaitForSelection<Pathway>(building.GetPathways());
     }
 
-    private void ResetHeal()
+    protected virtual void ResetHeal()
     {
-        _heal = new WaitForSelection<Investigator>(_investigator.FullHp ? null : new[] { _investigator });
     }
 }

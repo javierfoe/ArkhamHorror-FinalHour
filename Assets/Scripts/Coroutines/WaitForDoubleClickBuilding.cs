@@ -29,6 +29,11 @@ public class WaitForDoubleClickBuilding : WaitFor
         ResetMove();
     }
 
+    public bool IsOrigin(Building building)
+    {
+        return building == _firstBuilding;
+    }
+
     public override bool MoveNext()
     {
         var moveBool = _buildingSelection.MoveNext();

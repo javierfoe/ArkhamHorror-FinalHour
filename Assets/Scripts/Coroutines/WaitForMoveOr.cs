@@ -8,4 +8,9 @@ public abstract class WaitForMoveOr : WaitFor
     {
         Move = new WaitForDoubleClickBuilding(building, distance);
     }
+
+    protected bool IsOrigin(Building building)
+    {
+        return Move.IsOrigin(building);
+    }
 }
