@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine.Events;
 
-public abstract class WaitForAllActions : WaitForMoveOr
+public abstract class WaitForAllActions : WaitForDoubleClickBuilding
 {
     protected readonly int DamageAmount;
     private readonly bool _sealBool, _repairBool, _healBool, _monstersBool;
@@ -46,8 +46,8 @@ public abstract class WaitForAllActions : WaitForMoveOr
         _healBool = heal;
         _monstersBool = monsters;
 
-        Move.OnChangeBuilding.AddListener(UpdateBuilding);
-        Move.OnRestart.AddListener(ResetCoroutines);
+        OnChangeBuilding.AddListener(UpdateBuilding);
+        OnRestart.AddListener(ResetCoroutines);
         ResetCoroutines();
     }
 
@@ -71,11 +71,7 @@ public abstract class WaitForAllActions : WaitForMoveOr
         if (!ProcessCoroutine(_heal, ref _investigator, ResetHeal)) return false;
         if (!ProcessCoroutine(_seal, ref _pathway, ResetSeal)) return false;
 
-        if (Move.MoveNext()) return true;
-
-        MoveTo = Default;
-        ConfirmAction();
-        return false;
+        return base.MoveNext();
     }
 
     public override void Reset()
@@ -127,7 +123,7 @@ public abstract class WaitForAllActions : WaitForMoveOr
     {
         _monsters = ResetMonstersCoroutine(building);
     }
-    
+
     private void ResetRepair(Building building)
     {
         if (!_repairBool) return;
@@ -196,12 +192,10 @@ public abstract class WaitForAllActions : WaitForMoveOr
     private void UpdateBuilding(Building building)
     {
         if (_actions >= _maxActions) return;
-        if (building != MoveTo && !IsOrigin(building))
+        if (building != SelectedBuilding && !IsOrigin(building))
         {
             _actions++;
         }
-
-        MoveTo = building;
 
         UpdateSealCoroutine(building);
         UpdateRepairCoroutine(building);
@@ -210,17 +204,17 @@ public abstract class WaitForAllActions : WaitForMoveOr
 
     private void ResetCoroutines()
     {
-        ResetCoroutines(Default);
+        ResetCoroutines(SelectedBuilding);
     }
 
     private void ResetRepair()
     {
-        ResetRepair(Default);
+        ResetRepair(SelectedBuilding);
     }
 
     private void ResetSeal()
     {
-        ResetSeal(Default);
+        ResetSeal(SelectedBuilding);
     }
 
     private void ResetCoroutines(Building building)

@@ -38,7 +38,7 @@ public class WaitForTwiceMoveDamage : WaitFor
 
     public override void ConfirmAction()
     {
-        MoveTo = _move.MoveTo;
+        MoveTo = _move.SelectedBuilding;
         _monsters.ConfirmAction();
         base.ConfirmAction();
     }
@@ -46,7 +46,7 @@ public class WaitForTwiceMoveDamage : WaitFor
     private void ResetMove()
     {
         var distance = _monsters == null || _monsters.TotalDamage == 0 ? _distance * 2 : (_monsters.TotalDamage > 3 ? 0 : _distance);
-        if (_move != null && _origin.GetDistanceTo(_move.MoveTo) <= distance) return;
+        if (_move != null && _origin.GetDistanceTo(_move.SelectedBuilding) <= distance) return;
         _move = new WaitForDoubleClickBuilding(_origin, distance);
         _move.OnChangeBuilding.AddListener(ResetDamage);
         _move.OnRestart.AddListener(ResetDamageZero);
@@ -73,7 +73,7 @@ public class WaitForTwiceMoveDamage : WaitFor
 
     private void ResetDamage()
     {
-        ResetDamage(_move.MoveTo);
+        ResetDamage(_move.SelectedBuilding);
     }
 
     private void ResetCoroutines()

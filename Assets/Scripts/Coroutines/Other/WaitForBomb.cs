@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class WaitForBomb : WaitForMoveOr
+public class WaitForBomb : WaitForDoubleClickBuilding
 {
     private readonly Investigator _investigator;
     private readonly int _damage, _distance;
@@ -22,21 +22,14 @@ public class WaitForBomb : WaitForMoveOr
     {
         if (!_bomb)
         {
-            var moveBool = Move.MoveNext();
-
-            if (!moveBool)
-            {
-                MoveTo = Move.MoveTo;
-                ConfirmAction();
-                return false;
-            }
+            return base.MoveNext();
         }
 
         if (_damageCoroutine.MoveNext()) return true;
 
         if (!_bomb && _damageCoroutine.Building != null)
         {
-            MoveTo = _damageCoroutine.Building;
+            SelectedBuilding = _damageCoroutine.Building;
         }
 
         SelectedMonsters = _damageCoroutine.SelectedMonsters;

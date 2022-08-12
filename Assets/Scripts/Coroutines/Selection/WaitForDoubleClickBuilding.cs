@@ -11,10 +11,10 @@ public class WaitForDoubleClickBuilding : WaitFor
     private WaitForSelection<Building> _buildingSelection;
     private Building _selection;
 
-    public Building MoveTo
+    public Building SelectedBuilding
     {
         get => _selection != null ? _selection : _firstBuilding;
-        private set
+        protected set
         {
             _selection = value;
             OnChangeBuilding.Invoke(value);
@@ -44,9 +44,9 @@ public class WaitForDoubleClickBuilding : WaitFor
             if (currentMoveTo == _firstBuilding)
             {
                 OnRestart.Invoke(currentMoveTo);
-                if (MoveTo != _firstBuilding)
+                if (SelectedBuilding != _firstBuilding)
                 {
-                    MoveTo = currentMoveTo;
+                    SelectedBuilding = currentMoveTo;
                     Reset();
                     return true;
                 }
@@ -58,7 +58,7 @@ public class WaitForDoubleClickBuilding : WaitFor
                 return false;
             }
             
-            MoveTo = currentMoveTo;
+            SelectedBuilding = currentMoveTo;
             ResetMove();
         }
 
