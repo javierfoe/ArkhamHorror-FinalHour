@@ -5,9 +5,9 @@ public class WaitForDoubleClickBuilding : WaitFor
 {
     public readonly UnityEvent<Building> OnChangeBuilding = new(), OnRestart = new();
 
-    private readonly Func<bool> _condition;
     private readonly Building _firstBuilding;
     private readonly int _distance;
+    private Func<bool> _condition;
     private WaitForSelection<Building> _buildingSelection;
     private Building _selection;
 
@@ -21,12 +21,16 @@ public class WaitForDoubleClickBuilding : WaitFor
         }
     }
     
-    public WaitForDoubleClickBuilding(Building origin, int distance, Func<bool> condition = null)
+    public WaitForDoubleClickBuilding(Building origin, int distance)
     {
-        _condition = condition;
         _distance = distance;
         _firstBuilding = origin;
         ResetMove();
+    }
+
+    protected void SetCondition(Func<bool> condition)
+    {
+        _condition = condition;
     }
 
     public bool IsOrigin(Building building)
