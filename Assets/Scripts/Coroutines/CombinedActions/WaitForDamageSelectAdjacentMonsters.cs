@@ -5,7 +5,7 @@ public class WaitForDamageSelectAdjacentMonsters : WaitForSelectMonsters
     private readonly int _monsterAmount;
     private WaitForMonsterSelection _adjacentMonsters;
 
-    public new List<Monster> SelectedMonsters => _adjacentMonsters.SelectedMonsters;
+    public List<Monster> AdditionalMonsters => _adjacentMonsters.SelectedMonsters;
 
     public WaitForDamageSelectAdjacentMonsters(Building building, int distance, int damage, int monsterAmount) :
         base(building, distance, damage)

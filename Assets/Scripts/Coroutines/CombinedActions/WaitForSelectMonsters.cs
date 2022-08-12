@@ -5,7 +5,7 @@ public class WaitForSelectMonsters : WaitForAllActions
     private readonly Building _startingBuilding;
     private readonly int _monsterAmount;
     private readonly bool _alwaysStartingBuilding, _adjacent, _monsterSelection;
-    public List<Monster> DamagedMonsters => SelectedMonsters;
+    public new List<Monster> SelectedMonsters => base.SelectedMonsters;
 
     public WaitForSelectMonsters(Building building, int distance = 1, int monsterAmount = 1) : base(building, false,
         false, false, true, distance)
