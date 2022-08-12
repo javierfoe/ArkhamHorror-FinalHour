@@ -17,8 +17,7 @@ public class WaitForSelectMonsters : WaitForAllActions
         bool alwaysStartingBuilding = false, bool seal = false) : base(building, distance, damage, seal)
     {
         _adjacent = adjacent;
-        if (!alwaysStartingBuilding) return;
-        _alwaysStartingBuilding = true;
+        _alwaysStartingBuilding = alwaysStartingBuilding;
     }
 
     protected override void UpdateMonstersCoroutine(Building building)
