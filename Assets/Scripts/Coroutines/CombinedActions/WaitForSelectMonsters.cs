@@ -2,7 +2,6 @@
 
 public class WaitForSelectMonsters : WaitForAllActions
 {
-    private readonly Building _startingBuilding;
     private readonly int _monsterAmount;
     private readonly bool _alwaysStartingBuilding, _adjacent, _monsterSelection;
     public new List<Monster> SelectedMonsters => base.SelectedMonsters;
@@ -20,7 +19,6 @@ public class WaitForSelectMonsters : WaitForAllActions
         _adjacent = adjacent;
         if (!alwaysStartingBuilding) return;
         _alwaysStartingBuilding = true;
-        _startingBuilding = building;
     }
 
     protected override void UpdateMonstersCoroutine(Building building)
@@ -32,7 +30,7 @@ public class WaitForSelectMonsters : WaitForAllActions
     {
         if (_monsterSelection) return new WaitForMonsterSelection(new []{building}, _monsterAmount);
         if (!_adjacent) return base.ResetMonstersCoroutine(building);
-        var auxBuilding = _alwaysStartingBuilding ? _startingBuilding : building;
+        var auxBuilding = _alwaysStartingBuilding ? StartingBuilding : building;
         return new WaitForDamageMonsters(DamageAmount, auxBuilding.GetAdjacentBuildings(), 1);
     }
 }

@@ -5,7 +5,7 @@ public class WaitForDoubleClickBuilding : WaitFor
 {
     public readonly UnityEvent<Building> OnChangeBuilding = new(), OnRestart = new();
 
-    private readonly Building _firstBuilding;
+    protected readonly Building StartingBuilding;
     private readonly int _distance;
     private Func<bool> _condition;
     private WaitForSelection<Building> _buildingSelection;
@@ -13,7 +13,7 @@ public class WaitForDoubleClickBuilding : WaitFor
 
     public Building SelectedBuilding
     {
-        get => _selection != null ? _selection : _firstBuilding;
+        get => _selection != null ? _selection : StartingBuilding;
         protected set
         {
             _selection = value;
@@ -24,7 +24,7 @@ public class WaitForDoubleClickBuilding : WaitFor
     public WaitForDoubleClickBuilding(Building origin, int distance)
     {
         _distance = distance;
-        _firstBuilding = origin;
+        StartingBuilding = origin;
         ResetMove();
     }
 
@@ -35,7 +35,7 @@ public class WaitForDoubleClickBuilding : WaitFor
 
     public bool IsOrigin(Building building)
     {
-        return building == _firstBuilding;
+        return building == StartingBuilding;
     }
 
     public override bool MoveNext()
@@ -45,10 +45,10 @@ public class WaitForDoubleClickBuilding : WaitFor
         if (!moveBool)
         {
             var currentMoveTo = _buildingSelection.SelectedElement;
-            if (currentMoveTo == _firstBuilding)
+            if (currentMoveTo == StartingBuilding)
             {
                 OnRestart.Invoke(currentMoveTo);
-                if (SelectedBuilding != _firstBuilding)
+                if (SelectedBuilding != StartingBuilding)
                 {
                     SelectedBuilding = currentMoveTo;
                     Reset();
@@ -71,6 +71,6 @@ public class WaitForDoubleClickBuilding : WaitFor
 
     private void ResetMove()
     {
-        _buildingSelection = new WaitForSelection<Building>(Building.GetDistanceBuildings(_firstBuilding, _distance));
+        _buildingSelection = new WaitForSelection<Building>(Building.GetDistanceBuildings(StartingBuilding, _distance));
     }
 }
