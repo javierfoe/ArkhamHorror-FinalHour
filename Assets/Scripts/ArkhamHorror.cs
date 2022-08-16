@@ -18,7 +18,7 @@ public class ArkhamHorror : MonoBehaviour
     [SerializeField] private University university;
     [SerializeField] private OmenCardContainer hand, actions;
     [SerializeField] private GatePool gatePool;
-    [SerializeField] private Investigator investigatorPrefab;
+    [SerializeField] private SpawnInvestigator investigatorPrefab;
     [SerializeField] private int investigatorAmount;
     [SerializeField] private Monster monsterPrefab;
     [SerializeField] private Monsters baseMonsters;
@@ -239,7 +239,7 @@ public class ArkhamHorror : MonoBehaviour
         _investigators = new Investigator[investigatorAmount];
         for (var i = 0; i < investigatorAmount; i++)
         {
-            var investigator = Instantiate(investigatorPrefab).Initialize(5);
+            var investigator = Instantiate(investigatorPrefab).Spawn(Character.JennyBarnes, 5);
             _investigators[i] = investigator;
             var building = buildings[Random.Range(0, buildings.Count - 1)];
             building.MoveInvestigator(investigator);

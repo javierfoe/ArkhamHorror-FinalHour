@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine.Events;
 
-public class Investigator : Dweller, IClickable<Investigator>
+public abstract class Investigator : Dweller, IClickable<Investigator>
 {
     private readonly Pool<Action> _actions = new();
-    private readonly Dictionary<int, ActionText> _actionDefinitions = new();
+    private readonly ActionText[] _actionDefinitions = new ActionText[5];
 
     private int _currentHp;
 
@@ -28,26 +27,32 @@ public class Investigator : Dweller, IClickable<Investigator>
     {
         _currentHp--;
         if (_currentHp == 0) return;
-        hitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
+        HitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
     }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
         _actions.Add(new Action(0, false, BadAction.Special));
         _actions.Add(new Action(0, false, BadAction.Special));
         _actions.Add(new Action(1, true, BadAction.MonsterEachPortal));
         _actions.Add(new Action(1, true, BadAction.TwoMonstersCurrent));
-        _actions.Add(new Action(2, true, BadAction.GreenZone));
-        _actions.Add(new Action(2, true, BadAction.OrangeZone));
-        _actions.Add(new Action(3, true, BadAction.OrangeZone));
-        _actions.Add(new Action(3, true, BadAction.PurpleZone));
-        _actions.Add(new Action(4, true, BadAction.PurpleZone));
-        _actions.Add(new Action(4, true, BadAction.GreenZone));
-        _actionDefinitions.Add(0, new ActionText("Pues te reviento", "Haz 2 de daño en tu ubicación."));
-        _actionDefinitions.Add(1, new ActionText("Por qué tocas?", "Mueve hasta 2 veces."));
-        _actionDefinitions.Add(2, new ActionText("APARCAO!", "Repara tu ubicación una vez."));
-        _actionDefinitions.Add(3, new ActionText("Capitán salami!", "Sella un camino conectado a tu ubicación."));
-        _actionDefinitions.Add(4, new ActionText("Merengue merengue", "Recupera una vida."));
+
+        var badActions = new Pool<BadAction>();
+        for (var i = 0; i < 2; i++)
+        {
+            badActions.Add(BadAction.GreenZone);
+            badActions.Add(BadAction.OrangeZone);
+            badActions.Add(BadAction.PurpleZone);
+        }
+
+        float j = 2;
+        for (var i = 0; i < 6; i++, j+=0.5f)
+        {
+            // j is 2,2,3,3,4,4
+            _actions.Add(new Action((int)j, true, badActions.GetRandom()));
+        }
     }
 
     protected override void Start()

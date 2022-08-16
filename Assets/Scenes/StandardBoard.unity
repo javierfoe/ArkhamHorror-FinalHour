@@ -1495,6 +1495,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f43be08af9e76e42b21e992950dc984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  confirm: {fileID: 0}
+  undo: {fileID: 0}
   actionCard: {fileID: 0}
   university: {fileID: 1240850458}
   hand: {fileID: 1082189492}
@@ -1503,6 +1505,8 @@ MonoBehaviour:
     tesseract: 3
     heptagram: 3
     trinity: 3
+  investigatorPrefab: {fileID: 1852720645244774904, guid: bcaa075d2b3f0c44191458cb51325363, type: 3}
+  investigatorAmount: 0
   monsterPrefab: {fileID: 1029407920, guid: 545fcbcb83be5f949b4e30eca35d44f9, type: 3}
   baseMonsters: {fileID: 11400000, guid: 391ee40c238ccfd4da8a85b9d7adb76a, type: 2}
   difficulty: 1

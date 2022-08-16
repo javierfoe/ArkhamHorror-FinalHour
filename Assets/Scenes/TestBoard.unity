@@ -875,7 +875,7 @@ MonoBehaviour:
     tesseract: 3
     heptagram: 3
     trinity: 3
-  investigatorPrefab: {fileID: 2072326264, guid: bcaa075d2b3f0c44191458cb51325363, type: 3}
+  investigatorPrefab: {fileID: 1852720645244774904, guid: bcaa075d2b3f0c44191458cb51325363, type: 3}
   investigatorAmount: 1
   monsterPrefab: {fileID: 1029407920, guid: 545fcbcb83be5f949b4e30eca35d44f9, type: 3}
   baseMonsters: {fileID: 11400000, guid: bae7345d0eaecc2439e90c2820a1ca5f, type: 2}

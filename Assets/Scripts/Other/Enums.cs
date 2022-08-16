@@ -61,3 +61,12 @@ public enum BadAction
     PurpleZone,
     Special
 }
+
+public enum Character
+{
+    JennyBarnes,
+    TrashcanPete,
+    LilyChen,
+    TommyMuldoon,
+    MichaelMcGlen
+}
