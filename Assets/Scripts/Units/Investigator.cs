@@ -12,10 +12,9 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
 
     public bool FullHp => _currentHp == MaxHp;
 
-    public Investigator Initialize(int maxHp)
+    public void Initialize(int maxHp)
     {
         MaxHp = maxHp;
-        return this;
     }
 
     public void Hit(int damage)
@@ -34,14 +33,13 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
     {
         base.Awake();
         
-        _actions.Add(new Action(0, false, BadAction.Special));
-        _actions.Add(new Action(0, false, BadAction.Special));
         _actions.Add(new Action(1, true, BadAction.MonsterEachPortal));
         _actions.Add(new Action(1, true, BadAction.TwoMonstersCurrent));
 
         var badActions = new Pool<BadAction>();
         for (var i = 0; i < 2; i++)
         {
+            _actions.Add(new Action(0, false, BadAction.Special));
             badActions.Add(BadAction.GreenZone);
             badActions.Add(BadAction.OrangeZone);
             badActions.Add(BadAction.PurpleZone);
