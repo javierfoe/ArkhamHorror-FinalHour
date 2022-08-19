@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class ArkhamHorror : MonoBehaviour
+public partial class ArkhamHorror : MonoBehaviour
 {
     [Serializable]
     public class GatePool
@@ -32,6 +32,11 @@ public class ArkhamHorror : MonoBehaviour
     private Ritual _ritual;
     private Investigator[] _investigators;
     private AncientOneOmen _ancientOneOmen;
+
+    public Investigator OtherInvestigator(Investigator investigator)
+    {
+        return _investigators[0] == investigator ? _investigators[1] : _investigators[0];
+    }
 
     public MonsterSpawn MonsterSpawn(MonsterDefinition monsterDefinition)
     {

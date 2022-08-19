@@ -51,7 +51,7 @@ public class Building : MonoBehaviour, IClickable<Building>
         var auxBuildings = new List<Building> { this };
         var distance = 1;
         var maxLoops = 6;
-        while(distance < maxLoops)
+        while (distance < maxLoops)
         {
             var iteration = new List<Building>(auxBuildings);
             auxBuildings.Clear();
@@ -63,6 +63,7 @@ public class Building : MonoBehaviour, IClickable<Building>
                     {
                         return distance;
                     }
+
                     if (auxBuildings.Contains(adjacent)) continue;
                     auxBuildings.Add(adjacent);
                 }
@@ -70,9 +71,10 @@ public class Building : MonoBehaviour, IClickable<Building>
 
             distance++;
         }
+
         return -1;
     }
-    
+
     public static IEnumerable<Building> GetDistanceBuildings(Building origin, int distance)
     {
         var result = new List<Building> { origin };
@@ -91,6 +93,7 @@ public class Building : MonoBehaviour, IClickable<Building>
                 }
             }
         }
+
         return result;
     }
 
@@ -217,17 +220,17 @@ public class Building : MonoBehaviour, IClickable<Building>
         yield return ActivateMonsters(_monsters[MonsterSkill.Wrecker]);
     }
 
-    public void MoveInvestigator(Investigator investigator)
+    public IEnumerator MoveInvestigator(Investigator investigator)
     {
         foreach (var location in _investigatorLocations)
         {
             if (!location.IsFree) continue;
-            investigator.Location = location;
+            yield return investigator.SetLocation(location);
             break;
         }
     }
 
-    public void IncomingMonster(Monster monster)
+    public IEnumerator IncomingMonster(Monster monster)
     {
         var roomsAvailable = false;
         for (var i = 0; i < numberOfRooms && !roomsAvailable; i++)
@@ -236,37 +239,45 @@ public class Building : MonoBehaviour, IClickable<Building>
             if (!room.IsFree) continue;
 
             roomsAvailable = true;
-            monster.Location = room;
+            yield return monster.SetLocation(room);
 
             if (_incomingMonsters.Contains(monster)) continue;
             _incomingMonsters.Add(monster);
         }
 
-        if (roomsAvailable) return;
-
+        if (roomsAvailable) yield break;
+        
         TraversedBuildings.Add(this);
-
-        MoveMonsterToNextBuilding(monster);
+        yield return MoveMonsterToNextBuilding(monster);
     }
 
-    public void MoveMonster(Monster monster)
+    public IEnumerator MoveMonster(Monster monster)
     {
         TraversedBuildings.Clear();
-        MoveMonsterToNextBuilding(monster);
+        yield return MoveMonsterToNextBuilding(monster);
     }
 
-    public void Wreck(Monster monster)
+    public IEnumerator Wreck(Monster monster)
     {
         monster.Room.Wreckage = true;
-        monster.Location = null;
-        IncomingMonster(monster);
+        yield return null;
+        yield return monster.SetLocation(null);
+        yield return IncomingMonster(monster);
     }
 
-    public void Kill()
+    public IEnumerator Kill()
     {
         foreach (var investigator in _investigators)
         {
-            investigator.Hit(1);
+            yield return investigator.Hit();
+        }
+    }
+
+    public IEnumerator AddSeal(Pathway pathway, bool gray = false)
+    {
+        if (_pathways.ContainsValue(pathway))
+        {
+            yield return null;
         }
     }
 
@@ -291,7 +302,7 @@ public class Building : MonoBehaviour, IClickable<Building>
         monsters.Clear();
     }
 
-    private void MoveMonsterToNextBuilding(Monster monster)
+    private IEnumerator MoveMonsterToNextBuilding(Monster monster)
     {
         var nextBuilding = monster.Color switch
         {
@@ -310,11 +321,12 @@ public class Building : MonoBehaviour, IClickable<Building>
 
         if (deadMonster || TraversedBuildings.Contains(nextBuilding))
         {
-            monster.Destroy();
-            return;
+            yield return monster.Destroy();
         }
-
-        nextBuilding.IncomingMonster(monster);
+        else
+        {
+            yield return nextBuilding.IncomingMonster(monster);
+        }
     }
 
     private void Awake()

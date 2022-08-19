@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class Dweller : MonoBehaviour
@@ -7,30 +8,33 @@ public abstract class Dweller : MonoBehaviour
     public Building Building => Location.Building;
     public int MaxHp { get; protected set; }
 
-    public Location Location
+    public Location Location => _location;
+
+
+    public IEnumerator SetLocation(Location location)
     {
-        get => _location;
-        set
-        {
-            if (_location && _location != value) Empty(_location);
-            _location = value;
-            if (_location) Fill(_location);
-        }
+        if (_location && _location != location) yield return Empty(_location);
+        _location = location;
+        if (_location) yield return Fill(_location);
     }
 
-    protected virtual void Empty(Location location)
-    {
-        _location.SetDweller(null);
-    }
 
-    protected virtual void Fill(Location location)
+    public virtual IEnumerator Destroy()
     {
-        _location.SetDweller(this);
-    }
-
-    public virtual void Destroy()
-    {
+#pragma warning disable CS0162
+        if (false) yield return null;
+#pragma warning restore CS0162
         Destroy(gameObject);
+    }
+
+    protected virtual IEnumerator Empty(Location location)
+    {
+        yield return _location.SetDweller(null);
+    }
+
+    protected virtual IEnumerator Fill(Location location)
+    {
+        yield return _location.SetDweller(this);
     }
 
     protected virtual void Awake()

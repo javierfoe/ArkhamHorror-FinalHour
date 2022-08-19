@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Location : MonoBehaviour
@@ -9,15 +10,18 @@ public class Location : MonoBehaviour
         set;
     }
     public virtual bool IsFree => _empty;
-    public void SetDweller(Dweller dweller)
+    public IEnumerator SetDweller(Dweller dweller)
     {
         if (!dweller)
         {
             _empty = true;
-            return;
         }
-        dweller.transform.SetParent(transform);
-        dweller.transform.localPosition = Vector3.back;
-        _empty = false;
+        else
+        {
+            yield return null;
+            dweller.transform.SetParent(transform);
+            dweller.transform.localPosition = Vector3.back;
+            _empty = false;
+        }
     }
 }

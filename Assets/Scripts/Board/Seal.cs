@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Seal : MonoBehaviour
@@ -23,11 +24,12 @@ public class Seal : MonoBehaviour
         Disable();
     }
 
-    public void Restore(int uses = MaxUses)
+    public IEnumerator Restore(int uses = MaxUses)
     {
         gameObject.SetActive(true);
         _uses = uses;
         RefreshSprite();
+        yield return null;
     }
 
     private void RefreshSprite()

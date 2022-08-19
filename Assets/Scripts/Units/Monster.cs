@@ -37,12 +37,12 @@ public class Monster : Dweller, IClickable<Monster>
         return this;
     }
 
-    public override void Destroy()
+    public override IEnumerator Destroy()
     {
-        Location = null;
+        yield return SetLocation(null);
         _onDestroy?.Invoke(this);
         _dead = true;
-        base.Destroy();
+        yield return base.Destroy();
     }
 
     public IEnumerator Activate()
@@ -53,13 +53,13 @@ public class Monster : Dweller, IClickable<Monster>
             switch (skill)
             {
                 case MonsterSkill.Killer:
-                    Kill();
+                    yield return Kill();
                     break;
                 case MonsterSkill.Wrecker:
-                    Wreck();
+                    yield return Wreck();
                     break;
                 case MonsterSkill.Stalker:
-                    Move();
+                    yield return Stalk();
                     break;
             }
 
@@ -67,22 +67,22 @@ public class Monster : Dweller, IClickable<Monster>
         }
     }
 
-    private void Wreck()
+    private IEnumerator Wreck()
     {
-        if (!Location) return;
-        Building.Wreck(this);
+        if (!Location) yield break;
+        yield return Building.Wreck(this);
     }
 
-    private void Move()
+    private IEnumerator Stalk()
     {
-        if (!Location) return;
-        Building.MoveMonster(this);
+        if (!Location) yield break;
+        yield return Building.MoveMonster(this);
     }
 
-    private void Kill()
+    private IEnumerator Kill()
     {
-        if (!Location) return;
-        Building.Kill();
+        if (!Location) yield break;
+        yield return Building.Kill();
     }
 
     protected override void Start()

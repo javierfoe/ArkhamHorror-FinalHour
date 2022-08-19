@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,9 +11,14 @@ public class Pathway : MonoBehaviour, IClickable<Pathway>
     public UnityEvent<Pathway> OnClick { get; } = new();
     public Seal Seal => seal;
 
-    public void AddSeal()
+    public IEnumerator AddSeal()
     {
-        Seal.Restore();
+        yield return Seal.Restore();
+    }
+
+    public IEnumerator AddGraySeal()
+    {
+        yield return Seal.Restore(1);
     }
 
     public bool MonsterDiesToSeal(Monster monster)

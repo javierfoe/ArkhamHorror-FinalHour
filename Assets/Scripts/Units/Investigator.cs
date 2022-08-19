@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,9 +19,15 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
         MaxHp = maxHp;
     }
 
-    public void Hit(int damage)
+    public IEnumerator Hit(int damage = 1)
     {
-        for (var i = 0; i < damage; i++) Hit();
+        for (var i = 0; i < damage; i++)
+        {
+            _currentHp--;
+            if (_currentHp == 0) yield break;
+            HitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
+        }
+        yield return null;
     }
 
     public ActionCardDefinition DrawCard()
@@ -44,16 +50,16 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
         OnClick.Invoke(this);
     }
 
-    protected override void Fill(Location location)
+    protected override IEnumerator Fill(Location location)
     {
-        base.Fill(location);
-        location.Building.AddInvestigator(this);
+        yield return base.Fill(location);
+        Building.AddInvestigator(this);
     }
 
-    protected override void Empty(Location location)
+    protected override IEnumerator Empty(Location location)
     {
-        base.Empty(location);
-        location.Building.RemoveInvestigator(this);
+        yield return base.Empty(location);
+        Building.RemoveInvestigator(this);
     }
 
     protected override void Awake()
@@ -87,13 +93,6 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
     }
 
     protected abstract GoodAction GetGoodAction(int action);
-
-    private void Hit()
-    {
-        _currentHp--;
-        if (_currentHp == 0) return;
-        HitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
-    }
 
     private ActionCardDefinition GetActionCardDefinition(Action action)
     {
