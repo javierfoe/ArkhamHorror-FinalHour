@@ -45,6 +45,15 @@ public class Building : MonoBehaviour, IClickable<Building>
 
     public int GatePower { get; private set; }
 
+    public void RemoveMonster(Monster monster)
+    {
+        if (_incomingMonsters.Contains(monster)) _incomingMonsters.Remove(monster);
+        foreach (var monsters in _monsters.Values)
+        {
+            if (monsters.Contains(monster)) monsters.Remove(monster);
+        }
+    }
+
     public int GetDistanceTo(Building destination)
     {
         if (destination == this) return 0;

@@ -50,11 +50,9 @@ public class ShuddeMellOmen : AncientOneOmen
     {
         if (_chthonians.Count < _maxChthonians)
         {
-            var spawn = ArkhamHorror.MonsterSpawn(_chthonian);
-            var monster = spawn.Monster;
-            ArkhamHorror.IncomingMonsterLowestGate(monster);
-            _chthonians.Add(monster);
+            var spawn = ArkhamHorror.MonsterSpawn(_chthonian, ArkhamHorror.GetLowestGateBuilding());
             yield return spawn;
+            _chthonians.Add(spawn.Monster);
         }
     }
 }

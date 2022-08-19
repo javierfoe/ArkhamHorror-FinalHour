@@ -6,7 +6,7 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
 {
     private readonly Pool<Action> _actions = new();
 
-    [SerializeField] private int card;
+    [SerializeField] private int card = 1;
     private int _currentHp;
 
     public UnityEvent<Investigator> OnClick { get; } = new();
@@ -32,15 +32,7 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
 
     public ActionCardDefinition DrawCard()
     {
-        Action action;
-        if (card < 0 || card >= _actions.Count)
-        {
-            action = _actions[card];
-        }
-        else
-        {
-            action = _actions.GetRandom();
-        }
+        var action = card is < 0 or >= 5 ? _actions[0] : _actions[card*2];
 
         return GetActionCardDefinition(action);
     }
@@ -66,9 +58,6 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
     {
         base.Awake();
         
-        _actions.Add(new Action(1, BadAction.MonsterEachPortal));
-        _actions.Add(new Action(1, BadAction.TwoMonstersCurrent));
-
         var badActions = new Pool<BadAction>();
         for (var i = 0; i < 2; i++)
         {
@@ -77,6 +66,10 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
             badActions.Add(BadAction.OrangeZone);
             badActions.Add(BadAction.PurpleZone);
         }
+        
+        _actions.Add(new Action(1, BadAction.MonsterEachPortal));
+        _actions.Add(new Action(1, BadAction.TwoMonstersCurrent));
+
 
         float j = 2;
         for (var i = 0; i < 6; i++, j+=0.5f)

@@ -5,15 +5,18 @@ public abstract class Dweller : MonoBehaviour
 {
     protected Transform HitPoints;
     private Location _location;
-    public Building Building => Location.Building;
+    public Building Building => Location != null ? Location.Building : null;
     public int MaxHp { get; protected set; }
 
     public Location Location => _location;
 
 
-    public IEnumerator SetLocation(Location location)
+    public virtual IEnumerator SetLocation(Location location)
     {
-        if (_location && _location != location) yield return Empty(_location);
+        if (_location && _location != location)
+        {
+            yield return Empty(_location);
+        }
         _location = location;
         if (_location) yield return Fill(_location);
     }
@@ -21,20 +24,18 @@ public abstract class Dweller : MonoBehaviour
 
     public virtual IEnumerator Destroy()
     {
-#pragma warning disable CS0162
-        if (false) yield return null;
-#pragma warning restore CS0162
         Destroy(gameObject);
+        yield return null;
     }
 
     protected virtual IEnumerator Empty(Location location)
     {
-        yield return _location.SetDweller(null);
+        yield return location.SetDweller(null);
     }
 
     protected virtual IEnumerator Fill(Location location)
     {
-        yield return _location.SetDweller(this);
+        yield return location.SetDweller(this);
     }
 
     protected virtual void Awake()

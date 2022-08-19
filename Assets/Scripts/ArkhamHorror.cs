@@ -38,9 +38,19 @@ public partial class ArkhamHorror : MonoBehaviour
         return _investigators[0] == investigator ? _investigators[1] : _investigators[0];
     }
 
-    public MonsterSpawn MonsterSpawn(MonsterDefinition monsterDefinition)
+    public MonsterSpawn MonsterSpawn(MonsterDefinition monsterDefinition, Building building)
     {
-        return new MonsterSpawn(monsterPrefab, monsterDefinition, MonsterDied);
+        return new MonsterSpawn(monsterPrefab, monsterDefinition, building, MonsterDied);
+    }
+
+    public Building GetGateBuilding(Gate gate)
+    {
+        return university.GetGateBuilding(gate);
+    }
+
+    public Building GetLowestGateBuilding()
+    {
+        return university.GetLowestGateBuilding();
     }
 
     public IEnumerator SelectEldritchHorrorDifficulty(AncientOne horror, Difficulty difficulty)
@@ -94,14 +104,9 @@ public partial class ArkhamHorror : MonoBehaviour
         yield return university.DamageRitual(amount);
     }
 
-    public void IncomingMonsterLowestGate(Monster monster)
+    public IEnumerator IncomingMonster(Monster monster, Gate gate)
     {
-        university.GetLowestGateBuilding().IncomingMonster(monster);
-    }
-
-    public void IncomingMonster(Monster monster, Gate gate)
-    {
-        university.GetGateBuilding(gate).IncomingMonster(monster);
+        yield return university.GetGateBuilding(gate).IncomingMonster(monster);
     }
 
     public IEnumerator SpawnMonsters(int amount, Building building)
@@ -145,8 +150,7 @@ public partial class ArkhamHorror : MonoBehaviour
 
     private IEnumerator SpawnMonster(MonsterDefinition monsterDefinition, Building building)
     {
-        var monsterSpawn = new MonsterSpawn(monsterPrefab, monsterDefinition, MonsterDied);
-        building.IncomingMonster(monsterSpawn.Monster);
+        var monsterSpawn = new MonsterSpawn(monsterPrefab, monsterDefinition, building, MonsterDied);
         yield return monsterSpawn;
     }
 
@@ -238,7 +242,7 @@ public partial class ArkhamHorror : MonoBehaviour
         StartCoroutine(StartLoop());
     }
 
-    private void SpawnInvestigators()
+    private IEnumerator SpawnInvestigators()
     {
         var buildings = university.Buildings;
         _investigators = new Investigator[investigatorAmount];
@@ -247,33 +251,23 @@ public partial class ArkhamHorror : MonoBehaviour
             var investigator = Instantiate(investigatorPrefab).Spawn(Character.JennyBarnes, 5);
             _investigators[i] = investigator;
             var building = buildings[Random.Range(0, buildings.Count - 1)];
-            building.MoveInvestigator(investigator);
+            yield return building.MoveInvestigator(investigator);
         }
     }
 
     private IEnumerator StartLoop()
     {
-        SpawnInvestigators();
+        yield return SpawnInvestigators();
 
         yield return SelectEldritchHorrorDifficulty(eldritchHorror, difficulty);
 
         university.FinishMonsterMovement();
         while (true)
         {
-            var waitFor = new WaitForTwiceMoveDamage(3,university.GetGateBuilding(Gate.Heptagram), university.Buildings);
-
-            confirm.onClick.AddListener(waitFor.ConfirmAction);
-
-            yield return waitFor;
-
-            Debug.Log(waitFor.MoveTo, waitFor.MoveTo?.gameObject);
-            if (waitFor.SelectedMonsters != null)
-            {
-                foreach (var monster in waitFor.SelectedMonsters)
-                {
-                    Debug.Log($"{monster}: {monster.Building}", monster.Building.gameObject);
-                }
-            }
+            var investigator = _investigators[0];
+            var actionCard = investigator.DrawCard();
+            Debug.Log(actionCard.GoodAction);
+            yield return StartGoodAction(investigator, actionCard.GoodAction);
         }
     }
 }

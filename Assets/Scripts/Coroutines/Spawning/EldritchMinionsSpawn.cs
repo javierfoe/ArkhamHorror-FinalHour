@@ -44,14 +44,13 @@ public class EldritchMinionsSpawn : IEnumerator
         var eldritchMinionDefinition = _eldritchMinions[_currentMonster];
         _currentMonsterMax = eldritchMinionDefinition.monsterDefinition.amount;
         var eldritchMinion = eldritchMinionDefinition.eldritchMinion;
-        var monsterSpawn = _arkhamHorror.MonsterSpawn(eldritchMinionDefinition.monsterDefinition);
+        var monsterSpawn = _arkhamHorror.MonsterSpawn(eldritchMinionDefinition.monsterDefinition, _buildings[_currentBuilding]);
         if (!Monsters.ContainsKey(eldritchMinionDefinition.eldritchMinion))
         {
             Monsters.Add(eldritchMinionDefinition.eldritchMinion, new List<Monster>());
         }
 
         Monsters[eldritchMinion].Add(monsterSpawn.Monster);
-        _buildings[_currentBuilding].IncomingMonster(monsterSpawn.Monster);
         Current = monsterSpawn;
         return true;
     }

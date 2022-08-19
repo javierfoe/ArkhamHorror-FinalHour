@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
@@ -64,10 +63,8 @@ public class CthulhuOmen : AncientOneOmen
 
     private IEnumerator SpawnMonsterGate(MonsterDefinition monsterDefinition, Gate gate, List<Monster> list)
     {
-        MonsterSpawn spawn = ArkhamHorror.MonsterSpawn(monsterDefinition);
-        var monster = spawn.Monster;
-        ArkhamHorror.IncomingMonster(monster, gate);
-        list.Add(monster);
+        MonsterSpawn spawn = ArkhamHorror.MonsterSpawn(monsterDefinition, ArkhamHorror.GetGateBuilding(gate));
         yield return spawn;
+        list.Add(spawn.Monster);
     }
 }

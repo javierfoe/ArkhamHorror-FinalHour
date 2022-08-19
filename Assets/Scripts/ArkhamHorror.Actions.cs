@@ -1,10 +1,18 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 
 public partial class ArkhamHorror
 {
     private IEnumerator StartGoodAction(Investigator investigator, GoodAction goodAction)
     {
-        yield return null;
+        yield return goodAction switch
+        {
+            GoodAction.AColorForAllSeasons => AColorForAllSeasonsGood(investigator),
+            GoodAction.JennysTwin45s => JennysTwin45s(investigator),
+            GoodAction.Soiree => Soiree(investigator),
+            GoodAction.GrandGala => GrandGala(investigator),
+            GoodAction.Socialite => Socialite(investigator)
+        };
     }
 
     private IEnumerator StartBadAction(Investigator investigator, BadAction badAction)
@@ -36,26 +44,67 @@ public partial class ArkhamHorror
 
     private IEnumerator Socialite(Investigator investigator)
     {
-        var waitForDamage = new WaitForDamageMonsters(4, investigator.Building.GetAdjacentBuildings(true), 1);
+        yield return DamageOneAdjacentBuilding(investigator, 4, true);
+        var waitForOtherDamage = new WaitForDamageMonsters(4, new[] { OtherInvestigator(investigator).Building });
+        yield return ConfirmWaitKill(waitForOtherDamage);
+    }
+
+    private IEnumerator JennysTwin45s(Investigator investigator)
+    {
+        var waitForDamage = new WaitForDamageMonsters(2, investigator.Building.GetAdjacentBuildings(true), true);
+        yield return ConfirmWaitKill(waitForDamage);
+    }
+
+    private IEnumerator Soiree(Investigator investigator)
+    {
+        yield return DamageOneAdjacentBuilding(investigator, 2, true);
+        var other = OtherInvestigator(investigator);
+        if (other.Building.Zone != investigator.Building.Zone) yield break;
+        var waitForOtherDamage = new WaitForDamageMonsters(2, new[] { other.Building });
+        yield return ConfirmWaitKill(waitForOtherDamage);
+    }
+
+    private IEnumerator GrandGala(Investigator investigator)
+    {
+        yield return DamageOneAdjacentBuilding(investigator, 2, true);
+        //TODO cartas preferencia
+    }
+
+    private IEnumerator DamageOneAdjacentBuilding(Investigator investigator, int damage, bool includeSelf = false)
+    {
+        var waitForDamage =
+            new WaitForDamageMonsters(damage, investigator.Building.GetAdjacentBuildings(includeSelf), 1);
+        ConfirmWaitFor(waitForDamage);
         yield return waitForDamage;
         yield return MoveIfDifferent(investigator, waitForDamage.Building);
-        foreach (var monster in waitForDamage.SelectedMonsters)
-        {
-            yield return monster.Destroy();
-        }
-        var waitForOtherDamage = new WaitForDamageMonsters(4, new[] { OtherInvestigator(investigator).Building });
-        yield return waitForOtherDamage;
-        foreach (var monster in waitForOtherDamage.SelectedMonsters)
-        {
-            yield return monster.Destroy();
-        }
+        yield return KillMonsters(waitForDamage.SelectedMonsters);
+    }
+
+    private void ConfirmWaitFor(WaitFor waitFor)
+    {
+        confirm.onClick.AddListener(waitFor.ConfirmAction);
+    }
+
+    private IEnumerator ConfirmWaitKill(WaitForDamageMonsters waitFor)
+    {
+        ConfirmWaitFor(waitFor);
+        yield return waitFor;
+        yield return KillMonsters(waitFor.SelectedMonsters);
     }
 
     private static IEnumerator MoveIfDifferent(Investigator investigator, Building building)
     {
-        if (building != investigator.Building)
+        if (building != null && building != investigator.Building)
         {
             yield return building.MoveInvestigator(investigator);
+        }
+    }
+
+    private static IEnumerator KillMonsters(IEnumerable<Monster> monsters)
+    {
+        foreach (var monster in monsters)
+        {
+            yield return monster.Destroy();
         }
     }
 }

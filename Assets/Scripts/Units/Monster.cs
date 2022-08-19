@@ -4,7 +4,6 @@ using UnityEngine.Events;
 
 public class Monster : Dweller, IClickable<Monster>
 {
-
     [SerializeField] private UnityEngine.Color blue, red;
     [SerializeField] private Transform skillTokens;
 
@@ -12,7 +11,7 @@ public class Monster : Dweller, IClickable<Monster>
     private MonsterDefinition _monsterDefinition;
     private UnityAction<Monster> _onDestroy;
     private bool _dead;
-    
+
     public UnityEvent<Monster> OnClick { get; } = new();
 
     public MonsterDefinition MonsterDefinition
@@ -39,6 +38,8 @@ public class Monster : Dweller, IClickable<Monster>
 
     public override IEnumerator Destroy()
     {
+        if (Building) Building.RemoveMonster(this);
+
         yield return SetLocation(null);
         _onDestroy?.Invoke(this);
         _dead = true;
@@ -108,7 +109,7 @@ public class Monster : Dweller, IClickable<Monster>
         if (sprite == null) return;
 
         sprite.color = Color == Color.Blue ? blue : red;
-        
+
         gameObject.name = $"{MaxHp} {Color} {MainMonsterSkill}";
     }
 

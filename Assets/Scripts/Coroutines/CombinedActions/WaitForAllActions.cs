@@ -158,6 +158,8 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
     private bool ProcessCoroutine<T>(WaitForSelection<T> waitFor, ref T element, UnityAction action)
         where T : IClickable<T>
     {
+        if (waitFor == null) return true;
+        
         var waitForBool = waitFor.MoveNext();
 
         if (waitForBool) return true;
