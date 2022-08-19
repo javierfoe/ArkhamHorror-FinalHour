@@ -1,16 +1,18 @@
 using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 public abstract class Investigator : Dweller, IClickable<Investigator>
 {
     private readonly Pool<Action> _actions = new();
-    private readonly ActionText[] _actionDefinitions = new ActionText[5];
 
+    [SerializeField] private int card;
     private int _currentHp;
 
     public UnityEvent<Investigator> OnClick { get; } = new();
 
     public bool FullHp => _currentHp == MaxHp;
+    protected abstract BadAction BadAction { get; }
 
     public void Initialize(int maxHp)
     {
@@ -22,41 +24,24 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
         for (var i = 0; i < damage; i++) Hit();
     }
 
-    private void Hit()
+    public ActionCardDefinition DrawCard()
     {
-        _currentHp--;
-        if (_currentHp == 0) return;
-        HitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
-        
-        _actions.Add(new Action(1, true, BadAction.MonsterEachPortal));
-        _actions.Add(new Action(1, true, BadAction.TwoMonstersCurrent));
-
-        var badActions = new Pool<BadAction>();
-        for (var i = 0; i < 2; i++)
+        Action action;
+        if (card < 0 || card >= _actions.Count)
         {
-            _actions.Add(new Action(0, false, BadAction.Special));
-            badActions.Add(BadAction.GreenZone);
-            badActions.Add(BadAction.OrangeZone);
-            badActions.Add(BadAction.PurpleZone);
+            action = _actions[card];
+        }
+        else
+        {
+            action = _actions.GetRandom();
         }
 
-        float j = 2;
-        for (var i = 0; i < 6; i++, j+=0.5f)
-        {
-            // j is 2,2,3,3,4,4
-            _actions.Add(new Action((int)j, true, badActions.GetRandom()));
-        }
+        return GetActionCardDefinition(action);
     }
 
-    protected override void Start()
+    public void OnMouseDown()
     {
-        _currentHp = MaxHp;
-        base.Start();
+        OnClick.Invoke(this);
     }
 
     protected override void Fill(Location location)
@@ -71,48 +56,62 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
         location.Building.RemoveInvestigator(this);
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        
+        _actions.Add(new Action(1, BadAction.MonsterEachPortal));
+        _actions.Add(new Action(1, BadAction.TwoMonstersCurrent));
+
+        var badActions = new Pool<BadAction>();
+        for (var i = 0; i < 2; i++)
+        {
+            _actions.Add(new Action(0));
+            badActions.Add(BadAction.GreenZone);
+            badActions.Add(BadAction.OrangeZone);
+            badActions.Add(BadAction.PurpleZone);
+        }
+
+        float j = 2;
+        for (var i = 0; i < 6; i++, j+=0.5f)
+        {
+            // j is 2,2,3,3,4,4
+            _actions.Add(new Action((int)j, badActions.GetRandom()));
+        }
+    }
+
+    protected override void Start()
+    {
+        _currentHp = MaxHp;
+        base.Start();
+    }
+
+    protected abstract GoodAction GetGoodAction(int action);
+
+    private void Hit()
+    {
+        _currentHp--;
+        if (_currentHp == 0) return;
+        HitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
+    }
+
+    private ActionCardDefinition GetActionCardDefinition(Action action)
+    {
+        var goodAction = GetGoodAction(action.GoodActionNumber);
+        var badAction = action.GoodActionNumber != 0 ? action.BadAction : BadAction;
+
+        return new ActionCardDefinition(goodAction, badAction);
+    }
+
     private class Action
     {
-        public readonly int goodActionNumber;
-        public readonly bool investigate;
-        public readonly BadAction badAction;
+        public readonly int GoodActionNumber;
+        public readonly BadAction BadAction;
 
-        public Action(int number, bool investigate, BadAction badAction)
+        public Action(int number, BadAction badAction = BadAction.Special)
         {
-            goodActionNumber = number;
-            this.investigate = investigate;
-            this.badAction = badAction;
+            GoodActionNumber = number;
+            BadAction = badAction;
         }
-    }
-
-    private class ActionText
-    {
-        public readonly string title, goodAction;
-
-        public ActionText(string title, string goodAction)
-        {
-            this.title = title;
-            this.goodAction = goodAction;
-        }
-    }
-
-    public void OnMouseDown()
-    {
-        OnClick.Invoke(this);
-    }
-}
-
-[Serializable]
-public class ActionDefinition
-{
-    public readonly string title, goodAction, badAction;
-    public readonly BadAction badActionEnum;
-
-    public ActionDefinition(string title, string goodAction, BadAction badAction, string badActionString = null)
-    {
-        this.title = title;
-        this.goodAction = goodAction;
-        this.badAction = badActionString;
-        badActionEnum = badAction;
     }
 }

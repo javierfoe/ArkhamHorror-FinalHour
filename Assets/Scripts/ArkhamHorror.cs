@@ -118,7 +118,7 @@ public class ArkhamHorror : MonoBehaviour
         return eldritchMinionsSpawn;
     }
 
-    public void SetActionCard(ActionDefinition actionDefinition)
+    public void SetActionCard(ActionCardDefinition actionDefinition)
     {
         actionCard.SetActionCard(actionDefinition);
     }

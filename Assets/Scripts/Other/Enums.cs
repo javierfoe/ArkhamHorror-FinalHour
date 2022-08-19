@@ -54,12 +54,52 @@ public enum Clue
 
 public enum BadAction
 {
+    AColorForAllSeasons,
+    EndOfTheWorldVision,
+    Meditate,
+    ServeAndProtect,
+    Doorkeeper,
+    Obstacles,
     MonsterEachPortal,
     TwoMonstersCurrent,
     GreenZone,
     OrangeZone,
     PurpleZone,
     Special
+}
+
+public enum GoodAction
+{
+    AColorForAllSeasons,
+    Soiree,
+    JennysTwin45s,
+    Socialite,
+    GrandGala,
+    AVersatileInstrument,
+    ThrowABone,
+    PropheticDreams,
+    DukeToTheRescue,
+    EndOfTheWorldVision,
+    CalculatedForce,
+    PierceTheEye,
+    DaughterOfProphecy,
+    EmptyHand,
+    Meditate,
+    Becky,
+    PoliceSurveillance,
+    ServeAndProtect,
+    HighGround,
+    StandFirm,
+    Dynamite,
+    MakeAFuss,
+    Doorkeeper,
+    FinishTheWork,
+    ChicagoTypewriterMachineGun,
+    Marathon,
+    Relays,
+    Overcome,
+    CrossCountry,
+    Obstacles
 }
 
 public enum Character
