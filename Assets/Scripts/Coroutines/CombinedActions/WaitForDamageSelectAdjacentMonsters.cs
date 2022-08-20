@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class WaitForDamageSelectAdjacentMonsters : WaitForSelectMonsters
+public class WaitForDamageSelectAdjacentMonsters : WaitForDamage
 {
     private readonly int _monsterAmount;
     private WaitForMonsterSelection _adjacentMonsters;

@@ -13,6 +13,7 @@ public class WaitForMonsterSelection : WaitFor
 
     private bool _empty = true;
     public List<Monster> SelectedMonsters => new(_selectedMonsters);
+    public Building Building => SelectedMonsters is { Count: > 0 } ? SelectedMonsters[0].Building : null;
 
     public WaitForMonsterSelection(IEnumerable<Building> buildings, int amount = int.MaxValue)
     {

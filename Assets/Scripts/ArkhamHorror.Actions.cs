@@ -72,11 +72,10 @@ public partial class ArkhamHorror
 
     private IEnumerator DamageOneAdjacentBuilding(Investigator investigator, int damage, bool includeSelf = false)
     {
-        var waitForDamage =
-            new WaitForDamageMonsters(damage, investigator.Building.GetAdjacentBuildings(includeSelf), 1);
+        var waitForDamage = new WaitForDamage(investigator.Building, 1, damage);
         ConfirmWaitFor(waitForDamage);
         yield return waitForDamage;
-        yield return MoveIfDifferent(investigator, waitForDamage.Building);
+        yield return MoveIfDifferent(investigator, waitForDamage.SelectedBuilding);
         yield return KillMonsters(waitForDamage.SelectedMonsters);
     }
 
@@ -94,7 +93,7 @@ public partial class ArkhamHorror
 
     private static IEnumerator MoveIfDifferent(Investigator investigator, Building building)
     {
-        if (building != null && building != investigator.Building)
+        if (building && building != investigator.Building)
         {
             yield return building.MoveInvestigator(investigator);
         }

@@ -11,10 +11,10 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
     private Room _room;
     private Investigator _investigator;
     private Pathway _pathway;
-    private WaitForSelection<Pathway> _seal;
-    private WaitForSelection<Room> _repair;
-    private WaitForSelection<Investigator> _heal;
-    private WaitForMonsterSelection _monsters;
+    protected WaitForSelection<Pathway> Seal;
+    protected WaitForSelection<Room> Repair;
+    protected WaitForSelection<Investigator> Heal;
+    protected WaitForMonsterSelection Monsters;
 
     protected Pathway SealOn
     {
@@ -28,7 +28,7 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
         private set => _room = value;
     }
 
-    protected Investigator Heal
+    protected Investigator HealSomebody
     {
         get => _investigator;
         private set => _investigator = value;
@@ -67,9 +67,9 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
 
     public override bool MoveNext()
     {
-        if (!ProcessCoroutine(_repair, ref _room, ResetRepair)) return false;
-        if (!ProcessCoroutine(_heal, ref _investigator, ResetHeal)) return false;
-        if (!ProcessCoroutine(_seal, ref _pathway, ResetSeal)) return false;
+        if (!ProcessCoroutine(Repair, ref _room, ResetRepair)) return false;
+        if (!ProcessCoroutine(Heal, ref _investigator, ResetHeal)) return false;
+        if (!ProcessCoroutine(Seal, ref _pathway, ResetSeal)) return false;
 
         return base.MoveNext();
     }
@@ -85,7 +85,7 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
         base.ConfirmAction();
         if (_monstersBool)
         {
-            SelectedMonsters = _monsters.SelectedMonsters;
+            SelectedMonsters = Monsters.SelectedMonsters;
         }
     }
 
@@ -111,17 +111,17 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
 
     protected virtual void UpdateSealCoroutine(Building building)
     {
-        _seal = ResetSealCoroutine(building);
+        Seal = ResetSealCoroutine(building);
     }
 
     protected virtual void UpdateRepairCoroutine(Building building)
     {
-        _repair = ResetRepairCoroutine(building);
+        Repair = ResetRepairCoroutine(building);
     }
 
     protected virtual void UpdateMonstersCoroutine(Building building)
     {
-        _monsters = ResetMonstersCoroutine(building);
+        Monsters = ResetMonstersCoroutine(building);
     }
 
     private void ResetRepair(Building building)
@@ -145,14 +145,14 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
         }
 
         UpdateMonstersCoroutine(building);
-        _monsters.OnEmptied.AddListener(DecreaseActions);
-        _monsters.OnNotEmpty.AddListener(IncreaseActions);
+        Monsters.OnEmptied.AddListener(DecreaseActions);
+        Monsters.OnNotEmpty.AddListener(IncreaseActions);
     }
 
     private void ResetHeal()
     {
         if (!_healBool) return;
-        _heal = ResetHealCoroutine();
+        Heal = ResetHealCoroutine();
     }
 
     private bool ProcessCoroutine<T>(WaitForSelection<T> waitFor, ref T element, UnityAction action)
@@ -224,7 +224,7 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
         _actions = 0;
         SealOn = null;
         RepairOn = null;
-        Heal = null;
+        HealSomebody = null;
         SelectedMonsters.Clear();
         ResetSeal(building);
         ResetRepair(building);

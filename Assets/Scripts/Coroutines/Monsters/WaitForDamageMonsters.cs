@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class WaitForDamageMonsters : WaitForMonsterSelection
@@ -11,7 +10,6 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
     private readonly Building _buildingSpecial;
 
     public int TotalDamage { get; private set; }
-    public Building Building => SelectedMonsters is { Count: > 0 } ? SelectedMonsters[0].Building : null;
 
     public WaitForDamageMonsters(int damage, IEnumerable<Building> buildings, bool twice) : this(damage * 2, buildings,
         2)
@@ -25,7 +23,12 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
         _damage = damage;
         _damageSpecial = damageSpecial;
         _buildingSpecial = buildingSpecial;
-        var length = buildings.Count() + (buildingSpecial ? 1 : 0);
+        var count = 0;
+        foreach (var building in buildings)
+        {
+            count++;
+        }
+        var length = count + (buildingSpecial ? 1 : 0);
         _buildingAmount = buildingAmount == 0 || buildingAmount > length ? length : buildingAmount;
     }
 
@@ -83,7 +86,7 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
     {
         _buildingMonsters.Add(building, new List<Monster>());
         var damage = _damage;
-        if (_buildingSpecial != null && building == _buildingSpecial)
+        if (_buildingSpecial && building == _buildingSpecial)
         {
             damage = _damageSpecial;
         }
@@ -99,8 +102,8 @@ public class WaitForDamageMonsters : WaitForMonsterSelection
 
     private static IEnumerable<Building> AddBuildingToSet(IEnumerable<Building> set, Building building)
     {
-        var buildings = set.ToList();
-        if (building != null)
+        var buildings = new List<Building>(set);
+        if (building)
         {
             buildings.Add(building);
         }

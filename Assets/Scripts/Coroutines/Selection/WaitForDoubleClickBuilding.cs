@@ -7,16 +7,16 @@ public class WaitForDoubleClickBuilding : WaitFor
 
     protected readonly Building StartingBuilding;
     private readonly int _distance;
+    protected Building Selection;
     private Func<bool> _condition;
     private WaitForSelection<Building> _buildingSelection;
-    private Building _selection;
 
-    public Building SelectedBuilding
+    public virtual Building SelectedBuilding
     {
-        get => _selection != null ? _selection : StartingBuilding;
+        get => Selection ? Selection : StartingBuilding;
         protected set
         {
-            _selection = value;
+            Selection = value;
             OnChangeBuilding.Invoke(value);
         }
     }
@@ -40,6 +40,7 @@ public class WaitForDoubleClickBuilding : WaitFor
 
     public override bool MoveNext()
     {
+        if (!base.MoveNext()) return false;
         var moveBool = _buildingSelection.MoveNext();
 
         if (!moveBool)
@@ -56,7 +57,7 @@ public class WaitForDoubleClickBuilding : WaitFor
                 }
             }
 
-            if (currentMoveTo == _selection && (_condition == null || _condition()))
+            if (currentMoveTo == Selection && (_condition == null || _condition()))
             {
                 ConfirmAction();
                 return false;
