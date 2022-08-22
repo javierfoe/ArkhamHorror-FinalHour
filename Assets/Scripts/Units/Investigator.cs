@@ -1,16 +1,13 @@
 using System.Collections;
-using UnityEngine;
 using UnityEngine.Events;
 
 public abstract class Investigator : Dweller, IClickable<Investigator>
 {
     private readonly Pool<Action> _actions = new();
 
-    [SerializeField] private int card = 1;
     private int _currentHp;
 
     public UnityEvent<Investigator> OnClick { get; } = new();
-
     public bool FullHp => _currentHp == MaxHp;
     protected abstract BadAction BadAction { get; }
 
@@ -27,13 +24,13 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
             if (_currentHp == 0) yield break;
             HitPoints.GetChild(MaxHp - _currentHp - 1).gameObject.SetActive(false);
         }
+
         yield return null;
     }
 
     public ActionCardDefinition DrawCard()
     {
-        var action = card is < 0 or >= 5 ? _actions[0] : _actions[card*2];
-
+        var action = _actions.GetRandom();
         return GetActionCardDefinition(action);
     }
 
@@ -57,7 +54,7 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
     protected override void Awake()
     {
         base.Awake();
-        
+
         var badActions = new Pool<BadAction>();
         for (var i = 0; i < 2; i++)
         {
@@ -66,13 +63,13 @@ public abstract class Investigator : Dweller, IClickable<Investigator>
             badActions.Add(BadAction.OrangeZone);
             badActions.Add(BadAction.PurpleZone);
         }
-        
+
         _actions.Add(new Action(1, BadAction.MonsterEachPortal));
         _actions.Add(new Action(1, BadAction.TwoMonstersCurrent));
 
 
         float j = 2;
-        for (var i = 0; i < 6; i++, j+=0.5f)
+        for (var i = 0; i < 6; i++, j += 0.5f)
         {
             // j is 2,2,3,3,4,4
             _actions.Add(new Action((int)j, badActions.GetRandom()));

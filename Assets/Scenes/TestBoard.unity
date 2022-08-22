@@ -865,6 +865,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f43be08af9e76e42b21e992950dc984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  goodAction: 1
   confirm: {fileID: 871226810}
   undo: {fileID: 1503398502}
   actionCard: {fileID: 1978820280}

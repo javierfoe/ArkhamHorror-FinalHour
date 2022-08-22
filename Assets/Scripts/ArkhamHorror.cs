@@ -13,6 +13,8 @@ public partial class ArkhamHorror : MonoBehaviour
         public int tesseract, heptagram, trinity;
     }
 
+    [SerializeField] private GoodAction goodAction;
+
     [SerializeField] private Button confirm, undo;
     [SerializeField] private ActionCard actionCard;
     [SerializeField] private University university;
@@ -265,9 +267,8 @@ public partial class ArkhamHorror : MonoBehaviour
         while (true)
         {
             var investigator = _investigators[0];
-            var actionCard = investigator.DrawCard();
-            Debug.Log(actionCard.GoodAction);
-            yield return StartGoodAction(investigator, actionCard.GoodAction);
+            Debug.Log(goodAction);
+            yield return StartGoodAction(investigator, goodAction);
         }
     }
 }

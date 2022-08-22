@@ -6,14 +6,21 @@
     {
         get
         {
-            if (!Selection &&_monsterBuilding) return _monsterBuilding;
+            if (!Selection && _monsterBuilding) return _monsterBuilding;
             return base.SelectedBuilding;
         }
         protected set => base.SelectedBuilding = value;
     }
 
-    public WaitForDamage(Building building, int distance, int damage, bool adjacent = false, bool alwaysStartingBuilding = false, bool seal = false) : base(building, distance, damage, adjacent, alwaysStartingBuilding, seal)
+    public WaitForDamage(Building building, int distance, int damage, bool includeSelf = false, bool adjacent = false,
+        bool alwaysStartingBuilding = false, bool seal = false) : base(building, distance, damage, includeSelf,
+        adjacent, alwaysStartingBuilding, seal)
     {
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
         Monsters.OnEmptied.AddListener(NoMonsters);
         Monsters.OnNotEmpty.AddListener(MonsterSelected);
     }

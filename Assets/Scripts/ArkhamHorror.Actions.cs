@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public partial class ArkhamHorror
 {
@@ -57,10 +58,12 @@ public partial class ArkhamHorror
 
     private IEnumerator Soiree(Investigator investigator)
     {
+        Debug.Log("Move or damage (2) adjacent building");
         yield return DamageOneAdjacentBuilding(investigator, 2, true);
         var other = OtherInvestigator(investigator);
         if (other.Building.Zone != investigator.Building.Zone) yield break;
         var waitForOtherDamage = new WaitForDamageMonsters(2, new[] { other.Building });
+        Debug.Log("Damage building monster 2");
         yield return ConfirmWaitKill(waitForOtherDamage);
     }
 
@@ -72,11 +75,12 @@ public partial class ArkhamHorror
 
     private IEnumerator DamageOneAdjacentBuilding(Investigator investigator, int damage, bool includeSelf = false)
     {
-        var waitForDamage = new WaitForDamage(investigator.Building, 1, damage);
+        var waitForDamage = WaitForFactory.WaitForDamage(investigator.Building, 1, damage, includeSelf, true);
         ConfirmWaitFor(waitForDamage);
         yield return waitForDamage;
         yield return MoveIfDifferent(investigator, waitForDamage.SelectedBuilding);
         yield return KillMonsters(waitForDamage.SelectedMonsters);
+        yield return null;
     }
 
     private void ConfirmWaitFor(WaitFor waitFor)
@@ -84,7 +88,7 @@ public partial class ArkhamHorror
         confirm.onClick.AddListener(waitFor.ConfirmAction);
     }
 
-    private IEnumerator ConfirmWaitKill(WaitForDamageMonsters waitFor)
+    private IEnumerator ConfirmWaitKill(WaitForMonsterSelection waitFor)
     {
         ConfirmWaitFor(waitFor);
         yield return waitFor;

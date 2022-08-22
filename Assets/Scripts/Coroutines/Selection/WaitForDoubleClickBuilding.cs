@@ -46,7 +46,7 @@ public class WaitForDoubleClickBuilding : WaitFor
         if (!moveBool)
         {
             var currentMoveTo = _buildingSelection.SelectedElement;
-            if (currentMoveTo == StartingBuilding)
+            if (currentMoveTo == Selection && currentMoveTo == StartingBuilding)
             {
                 OnRestart.Invoke(currentMoveTo);
                 if (SelectedBuilding != StartingBuilding)

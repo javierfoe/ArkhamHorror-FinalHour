@@ -48,7 +48,6 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
 
         OnChangeBuilding.AddListener(UpdateBuilding);
         OnRestart.AddListener(ResetCoroutines);
-        ResetCoroutines();
     }
 
     protected WaitForAllActions(Investigator investigator, bool seal, bool repair, bool heal, bool monsters,
@@ -122,6 +121,11 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
     protected virtual void UpdateMonstersCoroutine(Building building)
     {
         Monsters = ResetMonstersCoroutine(building);
+    }
+
+    protected void ResetCoroutines()
+    {
+        ResetCoroutines(SelectedBuilding);
     }
 
     private void ResetRepair(Building building)
@@ -202,11 +206,6 @@ public abstract class WaitForAllActions : WaitForDoubleClickBuilding
         UpdateSealCoroutine(building);
         UpdateRepairCoroutine(building);
         UpdateMonstersCoroutine(building);
-    }
-
-    private void ResetCoroutines()
-    {
-        ResetCoroutines(SelectedBuilding);
     }
 
     private void ResetRepair()
