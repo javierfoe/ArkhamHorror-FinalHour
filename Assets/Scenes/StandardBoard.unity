@@ -1495,6 +1495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f43be08af9e76e42b21e992950dc984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  goodAction: 0
   confirm: {fileID: 0}
   undo: {fileID: 0}
   actionCard: {fileID: 0}
@@ -1610,6 +1611,22 @@ PrefabInstance:
       propertyPath: m_Size.y
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 934489884322124715, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 934489884322124715, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1776910122798705439, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1776910122798705439, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1806175682169032664, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_Name
       value: Building 1
@@ -1667,6 +1684,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1806175683333418625, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262981262883383831, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262981262883383831, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1
       objectReference: {fileID: 0}
@@ -2553,7 +2578,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240850456}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4535,11 +4560,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4262981262883383831, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4262981262883383831, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8024544546249155222, guid: 369687d0a959fdf488f6a339c168f1f9, type: 3}
       propertyPath: m_IsActive
