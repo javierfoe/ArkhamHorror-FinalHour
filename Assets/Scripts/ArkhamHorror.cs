@@ -15,10 +15,9 @@ public partial class ArkhamHorror : MonoBehaviour
 
     [SerializeField] private GoodAction goodAction;
 
-    [SerializeField] private Button confirm, undo;
+    [SerializeField] private Button confirm;
     [SerializeField] private ActionCard actionCard;
     [SerializeField] private University university;
-    [SerializeField] private OmenCardContainer hand, actions;
     [SerializeField] private GatePool gatePool;
     [SerializeField] private SpawnInvestigator investigatorPrefab;
     [SerializeField] private int investigatorAmount;
@@ -220,6 +219,7 @@ public partial class ArkhamHorror : MonoBehaviour
         for (var i = 0; i < 5; i++)
         {
             var clue = (Clue)(i % 5);
+            Debug.Log(clue);
             _clues.Add(clue);
             _clues.Add(clue);
         }
