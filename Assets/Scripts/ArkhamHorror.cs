@@ -68,7 +68,7 @@ public partial class ArkhamHorror : MonoBehaviour
                 _ancientOneOmen = new CthulhuOmen(difficulty, this);
                 break;
         }
-
+        SetClues();
         yield return _ancientOneOmen.SpawnStartingMonsters();
     }
 
@@ -132,6 +132,15 @@ public partial class ArkhamHorror : MonoBehaviour
     public void SetActionCard(ActionCardDefinition actionDefinition)
     {
         actionCard.SetActionCard(actionDefinition);
+    }
+
+    public void SetBuildingGates(Buildings buildingSetup)
+    {
+        var buildings = university.Buildings;
+        buildings[buildingSetup.heptagram].Gate = Gate.Heptagram;
+        buildings[buildingSetup.trinity].Gate = Gate.Trinity;
+        buildings[buildingSetup.ritual].Gate = Gate.Ritual;
+        buildings[buildingSetup.tesseract].Gate = Gate.Tesseract;
     }
 
     private void AddGate(int amount, Gate gate)
@@ -219,7 +228,6 @@ public partial class ArkhamHorror : MonoBehaviour
         for (var i = 0; i < 5; i++)
         {
             var clue = (Clue)(i % 5);
-            Debug.Log(clue);
             _clues.Add(clue);
             _clues.Add(clue);
         }
@@ -229,6 +237,11 @@ public partial class ArkhamHorror : MonoBehaviour
 
         _ritual = new Ritual(firstRitualSymbol, secondRitualSymbol);
 
+        StartCoroutine(StartLoop());
+    }
+
+    private void SetClues()
+    {
         for (var i = 0; i < 3; i++)
         {
             _clues.Add(Clue.Key);
@@ -240,8 +253,6 @@ public partial class ArkhamHorror : MonoBehaviour
             if (building.Gate != Gate.None) continue;
             building.Clue = _clues.GetRandom();
         }
-
-        StartCoroutine(StartLoop());
     }
 
     private IEnumerator SpawnInvestigators()

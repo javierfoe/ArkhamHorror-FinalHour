@@ -25,7 +25,7 @@ public enum Gate
     Tesseract = 1,
     Trinity = 2,
     Ritual = 3,
-    None = 4,
+    None = 4
 }
 
 public enum AncientOne

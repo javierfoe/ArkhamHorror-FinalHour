@@ -39,7 +39,14 @@ public class EldritchMinionDefinition
 public class DifficultySetting
 {
     public int monstersOther;
+    public Buildings buildings;
     public StartingMonsters[] portals;
+}
+
+[Serializable]
+public class Buildings
+{
+    public int ritual, tesseract, heptagram, trinity;
 }
 
 [Serializable]

@@ -21,6 +21,7 @@ public abstract class AncientOneOmen
             Difficulty.Hard => EldritchHorror.hard,
             _ => EldritchHorror.easy
         };
+        ArkhamHorror.SetBuildingGates(_difficulty.buildings);
     }
 
     public void AddOmenSymbols(int omens)

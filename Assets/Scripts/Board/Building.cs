@@ -40,7 +40,7 @@ public class Building : MonoBehaviour, IClickable<Building>
     public Gate Gate
     {
         get => gate;
-        private set => gate = value;
+        set => gate = value;
     }
 
     public int GatePower { get; private set; }
