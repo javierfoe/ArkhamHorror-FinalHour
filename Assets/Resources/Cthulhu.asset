@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 308bf78b3e9b50241b4f6cef9a409bbe, type: 3}
   m_Name: Cthulhu
   m_EditorClassIdentifier: 
-  intervalMinimums: 07000000050000000300000001000000
   easy:
     monstersOther: 2
+    buildings:
+      ritual: 11
+      tesseract: 7
+      heptagram: 14
+      trinity: 0
     portals:
     - gate: 2
       standardMonsters: 0
@@ -23,6 +27,11 @@ MonoBehaviour:
         amount: 1
   normal:
     monstersOther: 2
+    buildings:
+      ritual: 11
+      tesseract: 7
+      heptagram: 14
+      trinity: 0
     portals:
     - gate: 2
       standardMonsters: 0
@@ -37,6 +46,11 @@ MonoBehaviour:
       eldritchMinions: []
   hard:
     monstersOther: 2
+    buildings:
+      ritual: 0
+      tesseract: 3
+      heptagram: 7
+      trinity: 4
     portals:
     - gate: 2
       standardMonsters: 0

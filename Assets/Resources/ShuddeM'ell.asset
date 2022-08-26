@@ -12,12 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 308bf78b3e9b50241b4f6cef9a409bbe, type: 3}
   m_Name: ShuddeM'ell
   m_EditorClassIdentifier: 
-  intervalMinimums: 07000000050000000300000001000000
   easy:
     monstersOther: 2
+    buildings:
+      ritual: 13
+      tesseract: 8
+      heptagram: 0
+      trinity: 10
     portals: []
   normal:
     monstersOther: 2
+    buildings:
+      ritual: 13
+      tesseract: 8
+      heptagram: 0
+      trinity: 10
     portals:
     - gate: 4
       standardMonsters: 0
@@ -26,6 +35,11 @@ MonoBehaviour:
         amount: 1
   hard:
     monstersOther: 2
+    buildings:
+      ritual: 2
+      tesseract: 9
+      heptagram: 0
+      trinity: 13
     portals:
     - gate: 4
       standardMonsters: 1

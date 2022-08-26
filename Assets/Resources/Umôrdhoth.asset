@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 308bf78b3e9b50241b4f6cef9a409bbe, type: 3}
   m_Name: "Um\xF4rdhoth"
   m_EditorClassIdentifier: 
-  intervalMinimums: 060000000300000001000000
   easy:
     monstersOther: 1
+    buildings:
+      ritual: 1
+      tesseract: 4
+      heptagram: 9
+      trinity: 11
     portals:
     - gate: 4
       standardMonsters: 1
@@ -23,6 +27,11 @@ MonoBehaviour:
         amount: 1
   normal:
     monstersOther: 2
+    buildings:
+      ritual: 1
+      tesseract: 4
+      heptagram: 9
+      trinity: 11
     portals:
     - gate: 4
       standardMonsters: 0
@@ -31,6 +40,11 @@ MonoBehaviour:
         amount: 1
   hard:
     monstersOther: 2
+    buildings:
+      ritual: 3
+      tesseract: 13
+      heptagram: 6
+      trinity: 7
     portals:
     - gate: 4
       standardMonsters: 1
