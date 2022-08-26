@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +13,8 @@ public partial class ArkhamHorror
             GoodAction.JennysTwin45s => JennysTwin45s(investigator),
             GoodAction.Soiree => Soiree(investigator),
             GoodAction.GrandGala => GrandGala(investigator),
-            GoodAction.Socialite => Socialite(investigator)
+            GoodAction.Socialite => Socialite(investigator),
+            _ => throw new ArgumentOutOfRangeException(nameof(goodAction), goodAction, null)
         };
     }
 

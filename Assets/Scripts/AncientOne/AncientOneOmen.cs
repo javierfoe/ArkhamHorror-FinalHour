@@ -14,7 +14,9 @@ public abstract class AncientOneOmen
     protected AncientOneOmen(Difficulty difficulty, ArkhamHorror arkhamHorror)
     {
         ArkhamHorror = arkhamHorror;
+        // ReSharper disable once VirtualMemberCallInConstructor
         EldritchHorror = Resources.Load(EldritchHorrorResource) as EldritchHorror;
+        if (EldritchHorror == null) return;
         _difficulty = difficulty switch
         {
             Difficulty.Normal => EldritchHorror.normal,
